@@ -36,6 +36,7 @@ If the software is running properly you can control the robot as described.
 Controlling is done with the remote control. Steering is done with the right joystick. 
 
 The left joystick is used for driving a PTZ camera (a topic is generated), but a PTZ camera is not implemented now.
+![Rc controlling picture](https://bitbucket.org/edhage/bigbot_ros/downloads/rc_explanation.jpg)
 
 | Switch | Function                             |
 | -------|--------------------------------------|
@@ -76,3 +77,15 @@ It is not a software feature but electronic.This is added for completeness.
 | Down   | Holding brakes released. Drive connected to batteries.         |
 
 You can only switch on the remote if the SwD is Up, so when the drive is not able to power the motors. This is a safety feature.
+
+### Steering robot ###
+Moving the right joystick results in generating a geometry_msgs.msg.Twist message (topicname /cmd_vel) which is read by a node to drive the bigbot. 
+
+### Panning camera ###
+Moving the left joystick results in generating a bigbot_interfaces.msg.PTZSetpoint message (topicname /ptz_setpoint) which can be used to steer a PTZ camera (pan/tilt). The bigbot_camera package is not included in bigbot_ros.
+
+### Audio feedback ###
+Audio feedback is implemented by node speaknode which reads the topic /speak (type std_msgs.msg.String) and basically just forwards the text to the program espeak which speaks the text (in English).
+
+
+
