@@ -33,7 +33,9 @@ must be changed according to your installdirectory. Save the file.
 ## Controlling the robot ##
 If the software is running properly you can control the robot as described.
 
-Controlling is done with the remote control.
+Controlling is done with the remote control. Steering is done with the right joystick. 
+
+The left joystick is used for driving a PTZ camera (a topic is generated), but a PTZ camera is not implemented now.
 
 | Switch | Function                             |
 | -------|--------------------------------------|
