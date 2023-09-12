@@ -1,0 +1,14 @@
+navsat_transform:
+  ros__parameters:
+    use_sim_time: true
+    frequency: 10.0
+    delay: 3.0
+    magnetic_declination_radians: 0.2008874  
+    yaw_offset: 1.5707963
+    zero_altitude: true
+    broadcast_utm_transform: false  
+    broadcast_utm_transform_as_parent_frame: false
+    publish_filtered_gps: false
+    use_odometry_yaw: false
+    wait_for_datum: true
+    datum: [55.944904, 5.186693, 0.3]

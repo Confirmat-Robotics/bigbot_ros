@@ -1,0 +1,7 @@
+bool stop
+---
+bool success
+bool[] successes
+string[] description
+string[] error
+string[] nodename

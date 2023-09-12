@@ -1,0 +1,11 @@
+[Unit]
+Description=User Wait for Network
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/nm-online -s -q --timeout=30
+RemainAfterExit=yes
+
+[Install]
+WantedBy=default.target
+

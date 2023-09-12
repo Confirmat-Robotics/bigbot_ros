@@ -1,0 +1,5 @@
+bool clear
+---
+bool success
+string description
+string error

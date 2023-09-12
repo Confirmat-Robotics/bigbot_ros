@@ -1,0 +1,3 @@
+float32 horizontalspeed
+float32 verticalspeed
+float32 zoomspeed

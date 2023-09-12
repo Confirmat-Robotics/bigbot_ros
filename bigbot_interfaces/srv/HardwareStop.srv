@@ -1,0 +1,6 @@
+bool stop
+string sender
+---
+bool success
+string description
+string error
