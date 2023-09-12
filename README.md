@@ -11,6 +11,7 @@ This repository bigbot_ros contains the building blocks to start using ROS2 on b
 ### What are pre-requisites? ###
 * Linux based machine 
 * ROS2 installed
+* espeak installed (if you have a speaker, preferably an external usb-speaker you can mount on the robot)
 
 The software is tested on Ubuntu 20.04 with ROS2 Galactic, but should work with Humble too.
 
@@ -33,22 +34,43 @@ must be changed according to your installdirectory. Save the file.
 If the software is running properly you can control the robot as described.
 
 Controlling is done with the remote control.
+
 | Switch | Function                             |
-|--------|--------------------------------------|
+| -------|--------------------------------------|
 | SwB	 | switch on and off rosbag recording   |
 | SwC    | switch drive mode                    |
 | SwD    | Safety on/off (not software related) |
 
+### Rosbag recording ###
+
+| SwB    | Function                        |
+| -------|---------------------------------|
+| Up	 | Stop recording                  |
+| Down   | Start recording                 |
+
+If you have a speaker implemented and when you start the recording than you get voice-feedback (audio) if the start of the recording was feasible or not. If you stop recording you also get voice-feedback.
+
+### Drive modes ###
 The drive-modes are:
-| Switch | Function                             |
-|--------|--------------------------------------|
+
+| SwC    | Function                             |
+| -------|--------------------------------------|
 | Up	 | Manual full control                  |
 | Center | Manual limited radius                |
 | Down   | Autonomous mode (not implemented)    |
 
-The mode 'Manual limited radius' is usefull when you are towing a load.
+The mode 'Manual limited radius' is usefull when you are towing a load. 
 
-### Rosbag recording ###
+AWARE: if you just started the software you start in not any drive mode. You have to switch SwC to a mode. You can only switch on the remote if the SwC is Up. To choose the 'Manual full control' than first flip the switch to Center and back to Up-position. Now you have selected the 'Manual full control'.
 
-## Audio feedback ##
-Switching a drive-mode will 
+If you have a speaker implemented and when you change the drive mode than you get voice-feedback.
+
+### Safety on/off ###
+It is not a software feature but electronic.This is added for completeness.
+
+| SwD    | Function                             |
+| -------|--------------------------------------|
+| Up	 | Holding brakes are braking. Drive disconnected from batteries. |
+| Down   | Holding brakes released. Drive connected to batteries.         |
+
+You can only switch on the remote if the SwD is Up, so when the drive is not able to power the motors. This is a safety feature.
