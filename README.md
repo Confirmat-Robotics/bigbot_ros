@@ -40,13 +40,13 @@ The left joystick is used for driving a PTZ camera (a topic is generated), but a
 
 | Switch | Function                             |
 | -------|--------------------------------------|
-| SwB	 | switch on and off rosbag recording   |
+| SwA	 | switch on and off rosbag recording   |
 | SwC    | switch drive mode                    |
 | SwD    | Safety on/off (not software related) |
 
 ### Rosbag recording ###
 
-| SwB    | Function                        |
+| SwA    | Function                        |
 | -------|---------------------------------|
 | Up	 | Stop recording                  |
 | Down   | Start recording                 |
