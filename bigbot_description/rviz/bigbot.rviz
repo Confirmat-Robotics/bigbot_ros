@@ -1,0 +1,318 @@
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 70
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Status1
+        - /RobotModel1
+        - /RobotModel1/Mass Properties1
+        - /TF1
+        - /TF1/Frames1
+        - /TF1/Tree1
+      Splitter Ratio: 0.5
+    Tree Height: 475
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 10
+      Reference Frame: <Fixed Frame>
+      Value: true
+    - Alpha: 1
+      Class: rviz_default_plugins/RobotModel
+      Collision Enabled: false
+      Description File: ""
+      Description Source: Topic
+      Description Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /robot_description
+      Enabled: true
+      Links:
+        All Links Enabled: true
+        Assembly_TIM_lidar_urdf_1_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Assembly_TIM_lidar_urdf_1_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Assembly_TIM_lidar_urdf_1_UCS2:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Assembly_fixposition_frame_1_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        Assembly_fixposition_frame_1_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Assembly_fixposition_frame_1_UCSCAMERA:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Assembly_fixposition_frame_1_UCSGPS:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        Expand Joint Details: false
+        Expand Link Details: false
+        Expand Tree: false
+        Link Tree Style: Links in Alphabetic Order
+        base_link:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        bigbot_UCSBarF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSBarR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSLF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSLR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSRF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSRR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSTF:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        bigbot_UCSTR:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_urdf_1_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_urdf_1_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_urdf_2_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_urdf_2_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_urdf_3_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_urdf_3_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+        wheel_urdf_4_Base:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+          Value: true
+        wheel_urdf_4_UCS1:
+          Alpha: 1
+          Show Axes: false
+          Show Trail: false
+      Mass Properties:
+        Inertia: false
+        Mass: false
+      Name: RobotModel
+      TF Prefix: ""
+      Update Interval: 0
+      Value: true
+      Visual Enabled: true
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: true
+        Assembly_TIM_lidar_urdf_1_Base:
+          Value: true
+        Assembly_TIM_lidar_urdf_1_UCS1:
+          Value: true
+        Assembly_TIM_lidar_urdf_1_UCS2:
+          Value: true
+        Assembly_fixposition_frame_1_Base:
+          Value: true
+        Assembly_fixposition_frame_1_UCS1:
+          Value: true
+        Assembly_fixposition_frame_1_UCSCAMERA:
+          Value: true
+        Assembly_fixposition_frame_1_UCSGPS:
+          Value: true
+        base_link:
+          Value: true
+        bigbot_Base:
+          Value: true
+        bigbot_UCSBarF:
+          Value: true
+        bigbot_UCSBarR:
+          Value: true
+        bigbot_UCSLF:
+          Value: true
+        bigbot_UCSLR:
+          Value: true
+        bigbot_UCSRF:
+          Value: true
+        bigbot_UCSRR:
+          Value: true
+        bigbot_UCSTF:
+          Value: true
+        bigbot_UCSTR:
+          Value: true
+        wheel_urdf_1_Base:
+          Value: true
+        wheel_urdf_1_UCS1:
+          Value: true
+        wheel_urdf_2_Base:
+          Value: true
+        wheel_urdf_2_UCS1:
+          Value: true
+        wheel_urdf_3_Base:
+          Value: true
+        wheel_urdf_3_UCS1:
+          Value: true
+        wheel_urdf_4_Base:
+          Value: true
+        wheel_urdf_4_UCS1:
+          Value: true
+      Marker Scale: 1
+      Name: TF
+      Show Arrows: true
+      Show Axes: false
+      Show Names: false
+      Tree:
+        base_link:
+          bigbot_Base:
+            bigbot_UCSBarF:
+              Assembly_TIM_lidar_urdf_1_UCS1:
+                Assembly_TIM_lidar_urdf_1_Base:
+                  Assembly_TIM_lidar_urdf_1_UCS2:
+                    {}
+            bigbot_UCSBarR:
+              {}
+            bigbot_UCSLF:
+              wheel_urdf_3_UCS1:
+                wheel_urdf_3_Base:
+                  {}
+            bigbot_UCSLR:
+              wheel_urdf_4_UCS1:
+                wheel_urdf_4_Base:
+                  {}
+            bigbot_UCSRF:
+              wheel_urdf_1_UCS1:
+                wheel_urdf_1_Base:
+                  {}
+            bigbot_UCSRR:
+              wheel_urdf_2_UCS1:
+                wheel_urdf_2_Base:
+                  {}
+            bigbot_UCSTF:
+              Assembly_fixposition_frame_1_UCS1:
+                Assembly_fixposition_frame_1_Base:
+                  Assembly_fixposition_frame_1_UCSCAMERA:
+                    {}
+                  Assembly_fixposition_frame_1_UCSGPS:
+                    {}
+            bigbot_UCSTR:
+              {}
+      Update Interval: 0
+      Value: true
+  Enabled: true
+  Global Options:
+    Background Color: 100; 100; 100
+    Fixed Frame: base_link
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/MoveCamera
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 1.397739052772522
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: -0.01591673120856285
+        Y: -0.00770227424800396
+        Z: 0.15874186158180237
+      Focal Shape Fixed Size: false
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 0.43539899587631226
+      Target Frame: <Fixed Frame>
+      Value: Orbit (rviz_default_plugins)
+      Yaw: 0.7835673093795776
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 1093
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd000000010000000000000251000003ebfc0200000002fb000000100044006900730070006c006100790073010000003d0000025e000000c900fffffffb0000000a0056006900650077007301000002a100000187000000a400ffffff00000559000003eb00000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Views:
+    collapsed: false
+  Width: 1968
+  X: 976
+  Y: 100
