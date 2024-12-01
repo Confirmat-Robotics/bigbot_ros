@@ -1,41 +1,39 @@
 # README #
 
-This repository bigbot_ros contains the building blocks to start using ROS2 on bigbot. In the [For Developers](https://confirmatrobotics.com/for-developers/) section more information can be found about the hardware integration. 
+The package bigbot_description contains the urdf model of the bigbot for use of visualization of the robot in rviz, or in simulators such as Gazebo.
+The image below shows a joint state publisher which allows manipulation of the wheels. 
 
-### What is this repository for? ###
+![Urdf in rviz with joint state publisher](https://bitbucket.org/edhage/bigbot_ros/downloads/urdf_of_bigbot.png)
 
-* Baic ROS2 integration on the bigbot
-* Version 1
-* This software will read the RC receiver on the bigbot and steer the bigbot accordingingly. Also a rosbag can be started or stopped, and there is (optional but recommended) feedback to a USB-speaker and three drive-modes can be set.
 
-### What are pre-requisites? ###
-* Linux based machine 
-* ROS2 installed
-* espeak installed (if you have a speaker, preferably an external usb-speaker you can mount on the robot)
+### Addons ###
+Besides the bigbot also two addons have been modelled. 
 
-The software is tested on Ubuntu 20.04 with ROS2 Galactic, but should work with Humble too.
+The fixposition GTK-RTK module which allows for accurate positioning of the bigbot.
 
-### How do I get set up? ###
+![GPS-RTK accurate positioning of the bigbot](https://bitbucket.org/edhage/bigbot_ros/downloads/fixpos_gps.png)
 
-* Clone this repo on the computer.
-* Goto the git-directory and build it using colcon build
-* Copy the file bigbot/systemd/network-wait-online.service to folder $HOME/.config/systemd/user
-* Copy the file bigbot/systemd/bigbot_rc.service to folder $HOME/.config/systemd/user and edit it.
-* The line 
-```ExecStart=/bin/bash -c 'source /opt/ros/galactic/setup.bash; source /home/<installdirectory>/bigbot/install/setup.bash; ros2 launch bigbot_bringup rcdrive_launch.py'``` 
-must be changed according to your installdirectory. Save the file.
-* In a terminal type the following to enable the service:
-```systemctl –user enable bigbot_rc.service``` and 
-```systemctl –user start bigbot_rc.service```
-* If you type the following you should see a status report:
-```systemctl –user status bigbot_rc.service```
 
-## Controlling the robot ##
-If the software is running properly you can control the robot as described.
+The TIM lidar for mapping and obstacle avoidance.
 
-Controlling is done with the remote control. Steering is done with the right joystick. 
+![TIM lidar](https://bitbucket.org/edhage/bigbot_ros/downloads/lidar.png)
 
-The left joystick is used for driving a PTZ camera (a topic is generated), but a PTZ camera is not implemented now.
-![Rc controlling picture](https://bitbucket.org/edhage/bigbot_ros/downloads/rc_explanation.jpg)
 
-| Switch | Function                             |
+### Gazebo simulation ###
+
+In the directory model an sdf model is given that can be used in gazebo. For actually steering edit this file, at the end of the file give the location of your bigbot_controller controller file.
+
+#### Sensors ####
+
+The model provides simulation of these sensors:
+
+* GPS in the fixposition node
+* LIDAR in the TIM lidar node 
+
+If you do not use a fixposition GPS or a TIM lidar you can manually remove these links from the urdf and regenerate the sdf using the gz-command (provided by the makers of Gazebo).
+
+#### Controller ####
+
+The gazebo model has a controller for the wheels. An actual speed-controller is in the package bigbot_controller.
+The two left wheels are driven by one controller, and the two right wheels by another. Cornering is done by skidding.
+
