@@ -36,7 +36,7 @@ If the software is running properly you can control the robot as described.
 Controlling is done with the remote control. Steering is done with the right joystick. 
 
 The left joystick is used for driving a PTZ camera (a topic is generated), but a PTZ camera is not implemented now.
-![Rc controlling picture](https://bitbucket.org/edhage/bigbot_ros/downloads/rc_explanation.jpg)
+![Rc controlling picture](media/rc_explanation.jpg)
 
 | Switch | Function                             |
 | -------|--------------------------------------|
