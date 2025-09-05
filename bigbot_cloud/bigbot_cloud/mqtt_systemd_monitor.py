@@ -94,12 +94,14 @@ def main():
     broker = os.environ.get("MQTT_BROKER")
     username = os.environ.get("MQTT_USERNAME")
     password = os.environ.get("MQTT_PASSWORD")
+    user_mode_description = os.environ.get("DBUS_BUS", "SESSION") # "SYSTEM" or "SESSION"
+    user_mode = not (user_mode_description and user_mode_description.lower() == "system") # True for user-defined services (SESSION)
+
     robot_name = os.environ.get("ROBOT_NAME", "robot10")
     pub_topic = f"{robot_name}/services/status"
     sub_topic = f"{robot_name}/services/control"
     service_prefix = "bigbot" # e.g., "myservice_"
-    interval = 10                         # Time interval in seconds
-    user_mode = True                      # Set to True for user-defined services
+    interval = 10             # Time interval in seconds
 
     if not broker or not username or not password:
         raise RuntimeError("MQTT_BROKER, MQTT_USERNAME, and MQTT_PASSWORD environment variables must be set.")
