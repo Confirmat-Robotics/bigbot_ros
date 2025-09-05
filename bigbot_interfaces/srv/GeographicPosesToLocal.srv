@@ -1,0 +1,7 @@
+# Request
+bigbot_interfaces/GeographicPose[] poses
+string enu_frame
+bool projected
+---
+# Response
+geometry_msgs/Pose[] poses

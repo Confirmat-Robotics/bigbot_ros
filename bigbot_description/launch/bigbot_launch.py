@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 from ament_index_python.packages import get_package_share_directory
 from launch import LaunchDescription
@@ -11,7 +12,7 @@ def generate_launch_description():
 
     bigbot_description = os.path.join(get_package_share_directory('bigbot_description'))
     
-    world = 'ds'
+    world = 'myworld'
 
     gazebo = IncludeLaunchDescription(
                 PythonLaunchDescriptionSource([os.path.join(
@@ -50,6 +51,12 @@ def generate_launch_description():
         output='screen'
     )
 
+    load_camera_pan_controller = ExecuteProcess(
+        cmd=['ros2', 'control', 'load_controller', '--set-state', 'start',
+             'camera_pan_controller'],
+        output='screen'
+    )
+
     return LaunchDescription([
         RegisterEventHandler(
             event_handler=OnProcessExit(
@@ -61,6 +68,12 @@ def generate_launch_description():
             event_handler=OnProcessExit(
                 target_action=load_joint_state_controller,
                 on_exit=[load_bigbot_velocity_controller],
+            )
+        ),
+        RegisterEventHandler(
+            event_handler=OnProcessExit(
+                target_action=load_bigbot_velocity_controller,
+                on_exit=[load_camera_pan_controller],
             )
         ),
         gazebo,

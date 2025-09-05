@@ -1,3 +1,5 @@
+# This defines a predefined figure or path to travel and should be executed.
+# The return success means the request is received correctly
 uint8 YTURNLEFT = 0
 uint8 YTURNRIGHT = 1
 uint8 OVALLEFT = 2

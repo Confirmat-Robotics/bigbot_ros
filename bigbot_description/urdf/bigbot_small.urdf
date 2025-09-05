@@ -1,0 +1,142 @@
+<?xml version="1.0" ?>
+<robot name="bigbot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <link name="base_link"/>
+	
+  <link name="bigbot_Base">
+    <inertial>
+      <origin xyz="0.005541 -3e-05 0.010091" rpy="0 0 0"/>
+      <mass value="40"/>
+      <inertia ixx="1.539" ixy="0.0101" ixz="-0.103" iyy="2.913" iyz="0.0115" izz="3.314"/>
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <geometry>
+        <mesh filename="model://bigbot/meshes/bigbot_frame.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0.32" rpy="0 0 0"/>
+      <geometry>
+        <box size="0.42 0.36 0.32"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Wheel Links -->
+  <link name="wheel_urdf_3_UCS1">
+    <inertial>
+      <origin xyz="-0.00048 0.00039 0.07655" rpy="0 0 0"/>
+      <mass value="2.63"/>
+      <inertia ixx="0.015166" ixy="3.744e-13" ixz="7.34879e-11" iyy="0.015166" iyz="-5.9709e-11" izz="0.02414"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.00048 0.00039 0.07671" rpy="0 1.5708 0"/>
+      <geometry>
+        <mesh filename="model://bigbot/meshes/wheel.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.00048 0.00039 0.05671" rpy="3.14159 0.000796 3.14159"/>
+      <geometry>
+        <cylinder length="0.135" radius="0.16"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wheel_urdf_4_UCS1">
+    <inertial>
+      <origin xyz="-0.00048 0.00039 0.07655" rpy="0 0 0"/>
+      <mass value="2.63"/>
+      <inertia ixx="0.015166" ixy="3.744e-13" ixz="7.34879e-11" iyy="0.015166" iyz="-5.9709e-11" izz="0.02414"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.00048 0.00039 0.07671" rpy="0 1.5708 0"/>
+      <geometry>
+        <mesh filename="model://bigbot/meshes/wheel.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.00048 0.00039 0.05671" rpy="3.14159 0.000796 3.14159"/>
+      <geometry>
+        <cylinder length="0.135" radius="0.16"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wheel_urdf_1_UCS1">
+    <inertial>
+      <origin xyz="-0.00048 0.00039 0.07655" rpy="0 0 0"/>
+      <mass value="2.63"/>
+      <inertia ixx="0.015166" ixy="3.744e-13" ixz="7.34879e-11" iyy="0.015166" iyz="-5.9709e-11" izz="0.02414"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.00048 0.00039 0.07671" rpy="0 1.5708 0"/>
+      <geometry>
+        <mesh filename="model://bigbot/meshes/wheel.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.00048 0.00039 0.05671" rpy="3.14159 0.000796 3.14159"/>
+      <geometry>
+        <cylinder length="0.135" radius="0.16"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <link name="wheel_urdf_2_UCS1">
+    <inertial>
+      <origin xyz="-0.00048 0.00039 0.07655" rpy="0 0 0"/>
+      <mass value="2.63"/>
+      <inertia ixx="0.015166" ixy="3.744e-13" ixz="7.34879e-11" iyy="0.015166" iyz="-5.9709e-11" izz="0.02414"/>
+    </inertial>
+    <visual>
+      <origin xyz="-0.00048 0.00039 0.07671" rpy="0 1.5708 0"/>
+      <geometry>
+        <mesh filename="model://bigbot/meshes/wheel.dae" scale="0.001 0.001 0.001"/>
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="-0.00048 0.00039 0.05671" rpy="3.14159 0.000796 3.14159"/>
+      <geometry>
+        <cylinder length="0.135" radius="0.16"/>
+      </geometry>
+    </collision>
+  </link>
+
+  <!-- Joints -->
+  	<joint name="base_link_to_bigbot_Base" type="fixed">
+		<parent link="base_link" />
+		<child link="bigbot_Base" />
+		<origin rpy="0.0 0.0 0.0" xyz="0.00000 0.00000 0.00000" />
+	</joint>
+  
+  <joint name="bigbot_UCSLF_to_wheel_urdf_3_UCS1" type="continuous">
+    <parent link="bigbot_Base"/>
+    <child link="wheel_urdf_3_UCS1"/>
+    <origin xyz="0.27753 0.16887 0.17107" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="bigbot_UCSLR_to_wheel_urdf_4_UCS1" type="continuous">
+    <parent link="bigbot_Base"/>
+    <child link="wheel_urdf_4_UCS1"/>
+    <origin xyz="-0.27753 0.16887 0.17107" rpy="-1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="bigbot_UCSRF_to_wheel_urdf_1_UCS1" type="continuous">
+    <parent link="bigbot_Base"/>
+    <child link="wheel_urdf_1_UCS1"/>
+    <origin xyz="0.27753 -0.16887 0.17107" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+  <joint name="bigbot_UCSRR_to_wheel_urdf_2_UCS1" type="continuous">
+    <parent link="bigbot_Base"/>
+    <child link="wheel_urdf_2_UCS1"/>
+    <origin xyz="-0.27753 -0.16887 0.17107" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+
+</robot>

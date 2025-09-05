@@ -105,7 +105,7 @@ private:
     int32_t enc_m1, enc_m2;
     if(roboclaw_encoders(rc, address, &enc_m1, &enc_m2) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get encoder-data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get encoder-data");
     }
     else 
     {
@@ -116,7 +116,7 @@ private:
     int16_t mvoltage, lvoltage;
     if(roboclaw_main_battery_voltage(rc, address, &mvoltage) != ROBOCLAW_OK) 
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get main voltage data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get main voltage data");
     }
     else 
     {
@@ -125,7 +125,7 @@ private:
 
     if(roboclaw_logic_battery_voltage(rc, address, &lvoltage) != ROBOCLAW_OK) 
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get logic voltage data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get logic voltage data");
     }
     else 
     {
@@ -134,7 +134,7 @@ private:
     int16_t cur_m1, cur_m2;
     if(roboclaw_currents(rc, address, &cur_m1, &cur_m2) != ROBOCLAW_OK)  
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get current data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get current data");
     }
     else 
     {
@@ -145,7 +145,7 @@ private:
     int16_t dc_m1, dc_m2;
     if(roboclaw_dutycycles(rc, address, &dc_m1, &dc_m2) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get dutycycle data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get dutycycle data");
     }
     else 
     {
@@ -156,7 +156,7 @@ private:
     int32_t sp_m1, sp_m2;
     if(roboclaw_speeds(rc, address, &sp_m1, &sp_m2) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get speed data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get speed data");
     }
     else 
     {
@@ -169,7 +169,7 @@ private:
     int16_t temp, tempalt;
     if(roboclaw_temperature(rc, address, &temp) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get temperature data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get temperature data");
     }
     else 
     {
@@ -177,7 +177,7 @@ private:
     }
     if(roboclaw_temperature_alt(rc, address, &tempalt) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get alt temperature data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get alt temperature data");
     }
     else 
     {
@@ -187,7 +187,7 @@ private:
     int32_t sp_err_m1, sp_err_m2;
     if(roboclaw_speederrors(rc, address, &sp_err_m1, &sp_err_m2) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get speederror data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get speederror data");
     }
     else 
     {
@@ -197,7 +197,7 @@ private:
     int32_t p_err_m1, p_err_m2;
     if(roboclaw_poserrors(rc, address, &p_err_m1, &p_err_m2) != ROBOCLAW_OK)
     {
-      RCLCPP_ERROR(this->get_logger(), "I cannot get poserror data");
+      RCLCPP_WARN(this->get_logger(), "I cannot get poserror data");
     }
     else 
     {
@@ -217,7 +217,7 @@ private:
     if (got_data == false)
     {
       roboclaw_duty_m1m2(rc, address, 0, 0);
-      RCLCPP_ERROR(this->get_logger(), "No input so standstill");
+      /*RCLCPP_ERROR(this->get_logger(), No input so standstill); */
     }
     got_data = false;
   }

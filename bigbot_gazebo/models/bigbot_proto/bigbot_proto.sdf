@@ -1,0 +1,545 @@
+<?xml version="1.0" ?>
+<sdf version="1.7">
+	<model name="Bigbot Proto">
+		<link name="base_footprint">
+			<inertial>
+				<pose>0.032176 0.002457 0.085911 0 -0 0</pose>
+				<mass>24.4387</mass>
+				<inertia>
+					<ixx>1.68573</ixx>
+					<ixy>-0.0232754</ixy>
+					<ixz>-0.164798</ixz>
+					<iyy>2.32331</iyy>
+					<iyz>0.0556774</iyz>
+					<izz>1.74941</izz>
+				</inertia>
+			</inertial>
+			<visual name="base_footprint_fixed_joint_lump__base_link_visual">
+				<pose>0 0 0 0 -0 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/static_urdf.dae</uri>
+					</mesh>
+				</geometry>
+				<material>
+					<specular>0.01 0.01 0.01 1</specular>
+					<ambient>0.111 0.2 0.111 1.0</ambient>
+					<script>
+						<name>natogreen</name>
+						<uri>file://media/materials/scripts/gazebo.material</uri>
+					</script>
+				</material>
+			</visual>
+			<visual name="base_footprint_fixed_joint_lump__Assembly_TIM_lidar_urdf_1_Base_visual_1">
+				<pose>0.44 0 0.304 0 -0 1.5708</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/Assembly_TIM_lidar_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<visual name="base_footprint_fixed_joint_lump__Assembly_lid_empty_1_Base_visual_2">
+				<pose>0.3804 -0.156 0.448 0 -0 1.5708</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/Assembly_lid_empty.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<visual name="base_footprint_fixed_joint_lump__Assembly_gps_antenna_1_Base_visual_3">
+				<pose>0.13619 -0.00148 0.35755 1.5708 -0 1.5708</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/Assembly_gps_antenna_reduced.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<visual name="base_footprint_fixed_joint_lump__Assembly_camera_en_wifi_1_Base_visual_4">
+				<pose>0.18126 0.03474 0.35755 1.5708 -0 1.5708</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/Assembly_camera_en_wifi.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<visual name="base_footprint_fixed_joint_lump__dome_basis_urdf_1_Base_visual_5">
+				<pose>-0.16998 -0.12178 1.00904 1.5708 -0 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/dome_basis_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<sensor name="lidar_front" type="ray">
+				<always_on>1</always_on>
+				<visualize>1</visualize>
+				<update_rate>5</update_rate>
+				<ray>
+					<scan>
+						<horizontal>
+							<samples>360</samples>
+							<resolution>1</resolution>
+							<min_angle>0</min_angle>
+							<max_angle>6.28</max_angle>
+						</horizontal>
+					</scan>
+					<range>
+						<min>0.12</min>
+						<max>3.5</max>
+						<resolution>0.015</resolution>
+					</range>
+					<noise>
+						<type>gaussian</type>
+						<mean>0</mean>
+						<stddev>0.01</stddev>
+					</noise>
+				</ray>
+				<plugin filename="libgazebo_ros_ray_sensor.so" name="bigbot_laserscan">
+					<ros>
+						<remapping>~/out:=scan</remapping>
+					</ros>
+					<output_type>sensor_msgs/LaserScan</output_type>
+					<frame_name>base_scan</frame_name>
+				</plugin>
+				<pose>0.44 0 0.304 0 -0 1.5708</pose>
+			</sensor>
+			<sensor name="imu_sensor" type="imu">
+				<always_on>1</always_on>
+				<update_rate>200</update_rate>
+				<imu>
+					<angular_velocity>
+						<x>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.0002</stddev>
+							</noise>
+						</x>
+						<y>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.0002</stddev>
+							</noise>
+						</y>
+						<z>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.0002</stddev>
+							</noise>
+						</z>
+					</angular_velocity>
+					<linear_acceleration>
+						<x>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.017</stddev>
+							</noise>
+						</x>
+						<y>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.017</stddev>
+							</noise>
+						</y>
+						<z>
+							<noise type="gaussian">
+								<mean>0</mean>
+								<stddev>0.017</stddev>
+							</noise>
+						</z>
+					</linear_acceleration>
+				</imu>
+				<plugin filename="libgazebo_ros_imu_sensor.so" name="bigbot_imu">
+					<ros>
+						<remapping>~/out:=imu</remapping>
+					</ros>
+				</plugin>
+				<pose>0.1 -0.264 0.416 0 -0 0</pose>
+			</sensor>
+			<sensor name="my_gps" type="gps">
+				<always_on>1</always_on>
+				<update_rate>30</update_rate>
+				<plugin filename="libgazebo_ros_gps_sensor.so" name="gps_plugin">
+					<ros>
+						<namespace/>
+						<remapping>~/out:=gps/fix_base</remapping>
+					</ros>
+				</plugin>
+				<pose>0.13619 -0.00148 0.35755 1.5708 -0 1.5708</pose>
+			</sensor>
+		</link>
+		<joint name="Assembly_static_urdf_1_UCSLF_to_wiel_urdf_1_UCS1" type="revolute">
+			<pose relative_to="base_footprint">0.29393 0.16887 0.16907 -1.5708 0 0</pose>
+			<parent>base_footprint</parent>
+			<child>wiel_urdf_1_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-1e+16</lower>
+					<upper>1e+16</upper>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="wiel_urdf_1_UCS1">
+			<pose relative_to="Assembly_static_urdf_1_UCSLF_to_wiel_urdf_1_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>-0.00048 0.00039 0.07656 0 -0 0</pose>
+				<mass>3</mass>
+				<inertia>
+					<ixx>0.0479113</ixx>
+					<ixy>-9.01828e-08</ixy>
+					<ixz>-1.94675e-06</ixz>
+					<iyy>0.0479112</iyy>
+					<iyz>-1.0689e-07</iyz>
+					<izz>0.0828816</izz>
+				</inertia>
+			</inertial>
+			<collision name="wiel_urdf_1_UCS1_fixed_joint_lump__wiel_urdf_1_Base_collision">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<cylinder>
+						<length>0.1</length>
+						<radius>0.17</radius>
+					</cylinder>
+				</geometry>
+				<surface>
+					<contact>
+						<ode>
+							<kp>1e+07</kp>
+							<kd>1</kd>
+						</ode>
+					</contact>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>0.5</mu2>
+							<fdir1>1 0 0</fdir1>
+						</ode>
+					</friction>
+				</surface>
+			</collision>
+			<visual name="wiel_urdf_1_UCS1_fixed_joint_lump__wiel_urdf_1_Base_visual">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/wiel_reduced_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+		<joint name="dome_basis_urdf_1_UCS2_to_dome_rot_hor_urdf_1_UCS1" type="revolute">
+			<pose relative_to="base_footprint">-0.16998 -0.12178 0.88701 0 -0 -0</pose>
+			<parent>base_footprint</parent>
+			<child>dome_rot_hor_urdf_1_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-3.1415</lower>
+					<upper>3.1415</upper>
+					<effort>5</effort>
+					<velocity>2</velocity>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="dome_rot_hor_urdf_1_UCS1">
+			<pose relative_to="dome_basis_urdf_1_UCS2_to_dome_rot_hor_urdf_1_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>0 0 0.12135 0 -0 0</pose>
+				<mass>1.05728</mass>
+				<inertia>
+					<ixx>0.00325538</ixx>
+					<ixy>-1.45519e-18</ixy>
+					<ixz>-6.57223e-16</ixz>
+					<iyy>0.00269214</iyy>
+					<iyz>-5.17671e-11</iyz>
+					<izz>0.00234894</izz>
+				</inertia>
+			</inertial>
+			<visual name="dome_rot_hor_urdf_1_UCS1_fixed_joint_lump__dome_rot_hor_urdf_1_Base_visual">
+				<pose>0 0 0.12204 1.5708 -0 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/dome_rot_hor_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+		<joint name="dome_rot_hor_urdf_1_UCS2_to_dome_rot_camera_urdf_1_UCS1" type="revolute">
+			<pose relative_to="dome_rot_hor_urdf_1_UCS1">0 0.0375 0.12204 1.5708 -0 0</pose>
+			<parent>dome_rot_hor_urdf_1_UCS1</parent>
+			<child>dome_rot_camera_urdf_1_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-3.1415</lower>
+					<upper>3.1415</upper>
+					<effort>5</effort>
+					<velocity>2</velocity>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="dome_rot_camera_urdf_1_UCS1">
+			<pose relative_to="dome_rot_hor_urdf_1_UCS2_to_dome_rot_camera_urdf_1_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>0 -0.0004 0.0375 0 -0 0</pose>
+				<mass>1.82442</mass>
+				<inertia>
+					<ixx>0.00629101</ixx>
+					<ixy>2.53497e-05</ixy>
+					<ixz>6.08533e-09</ixz>
+					<iyy>0.00330987</iyy>
+					<iyz>9.29842e-09</iyz>
+					<izz>0.00609884</izz>
+				</inertia>
+			</inertial>
+			<visual name="dome_rot_camera_urdf_1_UCS1_fixed_joint_lump__dome_rot_camera_urdf_1_Base_visual">
+				<pose>0 0 0.0375 0 -0 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/dome_rot_camera_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+			<sensor name="camera1" type="camera">
+				<update_rate>30</update_rate>
+				<camera name="head">
+					<horizontal_fov>1.39626</horizontal_fov>
+					<image>
+						<width>800</width>
+						<height>800</height>
+						<format>R8G8B8</format>
+					</image>
+					<clip>
+						<near>0.02</near>
+						<far>300</far>
+					</clip>
+					<noise>
+						<type>gaussian</type>
+						<mean>0</mean>
+						<stddev>0.007</stddev>
+					</noise>
+				</camera>
+				<pose>0 0 0.0375 0 -0 0</pose>
+			</sensor>
+		</link>
+		<joint name="Assembly_static_urdf_1_UCSLR_to_wiel_urdf_2_UCS1" type="revolute">
+			<pose relative_to="base_footprint">-0.26113 0.16887 0.16907 -1.5708 0 0</pose>
+			<parent>base_footprint</parent>
+			<child>wiel_urdf_2_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-1e+16</lower>
+					<upper>1e+16</upper>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="wiel_urdf_2_UCS1">
+			<pose relative_to="Assembly_static_urdf_1_UCSLR_to_wiel_urdf_2_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>-0.00048 0.00039 0.07656 0 -0 0</pose>
+				<mass>3</mass>
+				<inertia>
+					<ixx>0.0479113</ixx>
+					<ixy>-9.01828e-08</ixy>
+					<ixz>-1.94675e-06</ixz>
+					<iyy>0.0479112</iyy>
+					<iyz>-1.0689e-07</iyz>
+					<izz>0.0828816</izz>
+				</inertia>
+			</inertial>
+			<collision name="wiel_urdf_2_UCS1_fixed_joint_lump__wiel_urdf_2_Base_collision">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<cylinder>
+						<length>0.1</length>
+						<radius>0.17</radius>
+					</cylinder>
+				</geometry>
+				<surface>
+					<contact>
+						<ode>
+							<kp>1e+07</kp>
+							<kd>1</kd>
+						</ode>
+					</contact>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>0.5</mu2>
+							<fdir1>1 0 0</fdir1>
+						</ode>
+					</friction>
+				</surface>
+			</collision>
+			<visual name="wiel_urdf_2_UCS1_fixed_joint_lump__wiel_urdf_2_Base_visual">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/wiel_reduced_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+		<joint name="Assembly_static_urdf_1_UCSRF_to_wiel_urdf_3_UCS1" type="revolute">
+			<pose relative_to="base_footprint">0.29393 -0.16887 0.16907 1.5708 -0 0</pose>
+			<parent>base_footprint</parent>
+			<child>wiel_urdf_3_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-1e+16</lower>
+					<upper>1e+16</upper>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="wiel_urdf_3_UCS1">
+			<pose relative_to="Assembly_static_urdf_1_UCSRF_to_wiel_urdf_3_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>-0.00048 0.00039 0.07656 0 -0 0</pose>
+				<mass>3</mass>
+				<inertia>
+					<ixx>0.0479113</ixx>
+					<ixy>-9.01828e-08</ixy>
+					<ixz>-1.94675e-06</ixz>
+					<iyy>0.0479112</iyy>
+					<iyz>-1.0689e-07</iyz>
+					<izz>0.0828816</izz>
+				</inertia>
+			</inertial>
+			<collision name="wiel_urdf_3_UCS1_fixed_joint_lump__wiel_urdf_3_Base_collision">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<cylinder>
+						<length>0.1</length>
+						<radius>0.17</radius>
+					</cylinder>
+				</geometry>
+				<surface>
+					<contact>
+						<ode>
+							<kp>1e+07</kp>
+							<kd>1</kd>
+						</ode>
+					</contact>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>0.5</mu2>
+							<fdir1>1 0 0</fdir1>
+						</ode>
+					</friction>
+				</surface>
+			</collision>
+			<visual name="wiel_urdf_3_UCS1_fixed_joint_lump__wiel_urdf_3_Base_visual">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/wiel_reduced_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+		<joint name="Assembly_static_urdf_1_UCSRR_to_wiel_urdf_4_UCS1" type="revolute">
+			<pose relative_to="base_footprint">-0.26113 -0.16887 0.16907 1.5708 -0 0</pose>
+			<parent>base_footprint</parent>
+			<child>wiel_urdf_4_UCS1</child>
+			<axis>
+				<xyz>0 0 1</xyz>
+				<limit>
+					<lower>-1e+16</lower>
+					<upper>1e+16</upper>
+				</limit>
+				<dynamics>
+					<spring_reference>0</spring_reference>
+					<spring_stiffness>0</spring_stiffness>
+				</dynamics>
+			</axis>
+		</joint>
+		<link name="wiel_urdf_4_UCS1">
+			<pose relative_to="Assembly_static_urdf_1_UCSRR_to_wiel_urdf_4_UCS1">0 0 0 0 -0 0</pose>
+			<inertial>
+				<pose>-0.00048 0.00039 0.07656 0 -0 0</pose>
+				<mass>3</mass>
+				<inertia>
+					<ixx>0.0479113</ixx>
+					<ixy>-9.01828e-08</ixy>
+					<ixz>-1.94675e-06</ixz>
+					<iyy>0.0479112</iyy>
+					<iyz>-1.0689e-07</iyz>
+					<izz>0.0828816</izz>
+				</inertia>
+			</inertial>
+			<collision name="wiel_urdf_4_UCS1_fixed_joint_lump__wiel_urdf_4_Base_collision">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<cylinder>
+						<length>0.1</length>
+						<radius>0.17</radius>
+					</cylinder>
+				</geometry>
+				<surface>
+					<contact>
+						<ode>
+							<kp>1e+07</kp>
+							<kd>1</kd>
+						</ode>
+					</contact>
+					<friction>
+						<ode>
+							<mu>1</mu>
+							<mu2>0.5</mu2>
+							<fdir1>1 0 0</fdir1>
+						</ode>
+					</friction>
+				</surface>
+			</collision>
+			<visual name="wiel_urdf_4_UCS1_fixed_joint_lump__wiel_urdf_4_Base_visual">
+				<pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+				<geometry>
+					<mesh>
+						<scale>0.01 0.01 0.01</scale>
+						<uri>model://bigbot_proto/meshes/wiel_reduced_urdf.dae</uri>
+					</mesh>
+				</geometry>
+			</visual>
+		</link>
+		<static>0</static>
+		<plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+			<robot_param>robot_description</robot_param>
+			<robot_namespace/>
+			<robot_param_node>robot_state_publisher</robot_param_node>
+			<parameters>/home/edward/bigbot_repo/install/bigbot_control/share/bigbot_control/config/control.yaml</parameters>
+		</plugin>
+	</model>
+</sdf>

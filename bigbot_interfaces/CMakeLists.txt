@@ -8,19 +8,27 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(vision_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/GeographicPose.msg"
+  "msg/GeographicPosition.msg"
   "msg/PTZSetpoint.msg"
   "msg/PathSection.msg"
   "msg/PathSections.msg"
   "msg/RotPose.msg"
   "msg/DriveFeedback.msg"
+  "msg/SpatialDetection.msg"
+  "msg/SpatialDetectionArray.msg"
   #"srv/ClearFault.srv"
   "srv/PredefinedPath.srv"
   "srv/TopicRecorder.srv"
+  "srv/GeographicPosesToLocal.srv"
+  "srv/BagControl.srv"
 
-  DEPENDENCIES std_msgs
+  DEPENDENCIES std_msgs vision_msgs geometry_msgs
 )
 
 if(BUILD_TESTING)

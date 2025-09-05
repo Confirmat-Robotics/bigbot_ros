@@ -1,0 +1,480 @@
+<?xml version="1.0" ?>
+<sdf version='1.7'>
+  <model name='bigbot'>
+
+    <plugin 
+      filename="libgps_fix_simulator.so" 
+      name="gps_fix_simulator">
+      <link_name>bigbot_gps</link_name>
+      <child_frame>FP_POI</child_frame>
+      <parent_frame>FP_ECEF</parent_frame>
+      <enu_frame>FP_ENU0</enu_frame>
+    </plugin>
+
+    <link name='base_link'>
+      <inertial>
+        <pose>0.005541 -3e-05 0.010091 0 -0 0</pose>
+        <mass>40</mass>
+        <inertia>
+          <ixx>1.539</ixx>
+          <ixy>0.0101</ixy>
+          <ixz>-0.103</ixz>
+          <iyy>2.913</iyy>
+          <iyz>0.0115</iyz>
+          <izz>3.314</izz>
+        </inertia>
+      </inertial>
+      <collision name='base_link_fixed_joint_lump__bigbot_Base_collision'>
+        <pose>0 0 0.32 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.42 0.36 0.32</size>
+          </box>
+        </geometry>
+      </collision>
+      <visual name='base_link_fixed_joint_lump__bigbot_Base_visual'>
+        <pose>0 0 0 0 -0 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/bigbot_frame.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__Assembly_TIM_lidar_urdf_1_Base_visual_1'>
+        <pose>0.446 0 0.306 0 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.01 0.01 0.01</scale>
+            <uri>model://bigbot/meshes/tim_lidar.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+      <visual name='base_link_fixed_joint_lump__Assembly_fixposition_frame_1_Base_visual_2'>
+        <pose>0.315 0 0.48 1.5708 -0 1.5708</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/fixpos.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name="base_to_lidar" type="fixed">
+      <parent>base_link</parent>
+      <child>Assembly_TIM_lidar_urdf_1_UCS2</child>
+      <pose>0.446 0 0.391 0 0 0</pose>
+    </joint>
+
+    <link name="Assembly_TIM_lidar_urdf_1_UCS2">
+      <sensor name='lidar' type="gpu_lidar">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <pose>0.446 0 0.391 0 -0 0</pose>
+        <update_rate>5</update_rate>
+        <topic>scan</topic>
+        <gz_frame_id>Assembly_TIM_lidar_urdf_1_UCS2</gz_frame_id>
+        <lidar>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1.0</resolution>
+              <min_angle>-2.0</min_angle>
+              <max_angle>2.0</max_angle>
+            </horizontal>
+            <vertical>
+              <samples>1</samples>
+              <min_angle>0.0</min_angle>
+              <max_angle>0.0</max_angle>
+          </vertical>
+          </scan>
+          <range>
+            <min>0.1</min>
+            <max>15</max>
+            <resolution>0.015</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </lidar>
+      </sensor>
+  </link>
+
+<joint name="base_to_gps" type="fixed">
+  <parent>base_link</parent>
+  <child>bigbot_gps</child>
+  <pose>0.375 0.0 0.480 0 0 0</pose>
+</joint>
+
+    <link name="bigbot_gps">
+      <sensor name="gps_sensor" type="navsat">
+        <always_on>true</always_on>
+        <update_rate>10</update_rate>
+        <topic>gps/fix</topic>
+        <gz_frame_id>bigbot_UCSTF</gz_frame_id>
+        <navsat>
+          <position_sensing>
+            <horizontal>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-8</stddev>
+              </noise>
+            </horizontal>
+            <vertical>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>4e-8</stddev>
+              </noise>
+            </vertical>
+          </position_sensing>
+          <velocity_sensing>
+            <horizontal>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-8</stddev>
+              </noise>
+            </horizontal>
+            <vertical>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>4e-8</stddev>
+              </noise>
+            </vertical>
+          </velocity_sensing>
+        </navsat>
+      </sensor>
+    </link>
+    
+    <joint name='bigbot_UCSLF_to_wheel_urdf_3_UCS1' type='revolute'>
+      <pose relative_to='base_link'>0.27753 0.16887 0.17107 -1.5708 0 0</pose>
+      <parent>base_link</parent>
+      <child>wheel_urdf_3_UCS1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>30</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name='wheel_urdf_3_UCS1'>
+      <pose relative_to='bigbot_UCSLF_to_wheel_urdf_3_UCS1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.00048 0.00039 0.07655 0 -0 0</pose>
+        <mass>2.63</mass>
+        <inertia>
+          <ixx>0.015166</ixx>
+          <ixy>3.744e-13</ixy>
+          <ixz>7.34879e-11</ixz>
+          <iyy>0.015166</iyy>
+          <iyz>-5.9709e-11</iyz>
+          <izz>0.02414</izz>
+        </inertia>
+      </inertial>
+      <collision name='wheel_urdf_3_UCS1_fixed_joint_lump__wheel_urdf_3_Base_collision'>
+        <pose>-0.00048 0.00039 0.05671 3.14159 0.000796 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <length>0.135</length>
+            <radius>0.16</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu> <!-- Reduced friction coefficient -->
+              <mu2>8</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0015</slip1>
+              <slip2>0.0015</slip2> <!-- Restored slip -->
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0.001</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+6</kp>
+              <kd>100</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.01</min_depth> <!-- Updated minimum contact depth -->
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='wheel_urdf_3_UCS1_fixed_joint_lump__wheel_urdf_3_Base_visual'>
+        <pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name='bigbot_UCSLR_to_wheel_urdf_4_UCS1' type='revolute'>
+      <pose relative_to='base_link'>-0.27753 0.16887 0.17107 -1.5708 0 0</pose>
+      <parent>base_link</parent>
+      <child>wheel_urdf_4_UCS1</child>
+      <axis>
+        <xyz>0 0 1</xyz>
+        <limit>
+          <effort>30</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name='wheel_urdf_4_UCS1'>
+      <pose relative_to='bigbot_UCSLR_to_wheel_urdf_4_UCS1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.00048 0.00039 0.07655 0 -0 0</pose>
+        <mass>2.63</mass>
+        <inertia>
+          <ixx>0.015166</ixx>
+          <ixy>3.744e-13</ixy>
+          <ixz>7.34879e-11</ixz>
+          <iyy>0.015166</iyy>
+          <iyz>-5.9709e-11</iyz>
+          <izz>0.02414</izz>
+        </inertia>
+      </inertial>
+      <collision name='wheel_urdf_4_UCS1_fixed_joint_lump__wheel_urdf_4_Base_collision'>
+        <pose>-0.00048 0.00039 0.05671 3.14159 0.000796 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <length>0.135</length>
+            <radius>0.16</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu> <!-- Reduced friction coefficient -->
+              <mu2>8</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0015</slip1>
+              <slip2>0.0015</slip2> <!-- Restored slip -->
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0.001</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+6</kp>
+              <kd>100</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.01</min_depth> <!-- Updated minimum contact depth -->
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='wheel_urdf_4_UCS1_fixed_joint_lump__wheel_urdf_4_Base_visual'>
+        <pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+
+    <joint name='bigbot_UCSRF_to_wheel_urdf_1_UCS1' type='revolute'>
+      <pose relative_to='base_link'>0.27753 -0.16887 0.17107 1.5708 -0 0</pose>
+      <parent>base_link</parent>
+      <child>wheel_urdf_1_UCS1</child>
+      <axis>
+        <xyz>0 0 -1</xyz> <!-- Reversed axis direction -->
+        <limit>
+          <effort>30</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+
+    <link name='wheel_urdf_1_UCS1'>
+      <pose relative_to='bigbot_UCSRF_to_wheel_urdf_1_UCS1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.00048 0.00039 0.07655 0 -0 0</pose>
+        <mass>2.63</mass>
+        <inertia>
+          <ixx>0.015166</ixx>
+          <ixy>3.744e-13</ixy>
+          <ixz>7.34879e-11</ixz>
+          <iyy>0.015166</iyy>
+          <iyz>-5.9709e-11</iyz>
+          <izz>0.02414</izz>
+        </inertia>
+      </inertial>
+      <collision name='wheel_urdf_1_UCS1_fixed_joint_lump__wheel_urdf_1_Base_collision'>
+        <pose>-0.00048 0.00039 0.05671 3.14159 0.000796 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <length>0.135</length>
+            <radius>0.16</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu> <!-- Reduced friction coefficient -->
+              <mu2>8</mu2>
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0015</slip1>
+              <slip2>0.0015</slip2> <!-- Restored slip -->
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0.001</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+6</kp>
+              <kd>100</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.01</min_depth> <!-- Updated minimum contact depth -->
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='wheel_urdf_1_UCS1_fixed_joint_lump__wheel_urdf_1_Base_visual'>
+        <pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    <joint name='bigbot_UCSRR_to_wheel_urdf_2_UCS1' type='revolute'>
+      <pose relative_to='base_link'>-0.27753 -0.16887 0.17107 1.5708 -0 0</pose>
+      <parent>base_link</parent>
+      <child>wheel_urdf_2_UCS1</child>
+      <axis>
+        <xyz>0 0 -1</xyz> <!-- Reversed axis direction -->
+        <limit>
+          <effort>30</effort>
+          <velocity>10</velocity>
+        </limit>
+        <dynamics>
+          <spring_reference>0</spring_reference>
+          <spring_stiffness>0</spring_stiffness>
+        </dynamics>
+      </axis>
+    </joint>
+    <link name='wheel_urdf_2_UCS1'>
+      <pose relative_to='bigbot_UCSRR_to_wheel_urdf_2_UCS1'>0 0 0 0 -0 0</pose>
+      <inertial>
+        <pose>-0.00048 0.00039 0.07655 0 -0 0</pose>
+        <mass>2.63</mass>
+        <inertia>
+          <ixx>0.015166</ixx>
+          <ixy>3.744e-13</ixy>
+          <ixz>7.34879e-11</ixz>
+          <iyy>0.015166</iyy>
+          <iyz>-5.9709e-11</iyz>
+          <izz>0.02414</izz>
+        </inertia>
+      </inertial>
+      <collision name='wheel_urdf_2_UCS1_fixed_joint_lump__wheel_urdf_2_Base_collision'>
+        <pose>-0.00048 0.00039 0.05671 3.14159 0.000796 3.14159</pose>
+        <geometry>
+          <cylinder>
+            <length>0.135</length>
+            <radius>0.16</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <friction>
+            <ode>
+              <mu>1</mu> <!-- Reduced friction coefficient -->
+              <mu2>8</mu2> <!-- driving direction-->
+              <fdir1>1 0 0</fdir1>
+              <slip1>0.0015</slip1> <!-- Further reduced slip -->
+              <slip2>0.0015</slip2> <!-- driving direction  -->
+            </ode>
+          </friction>
+          <contact>
+            <ode>
+              <soft_cfm>0.001</soft_cfm>
+              <soft_erp>0.2</soft_erp>
+              <kp>1e+6</kp>
+              <kd>100</kd>
+              <max_vel>1.0</max_vel>
+              <min_depth>0.01</min_depth> <!-- Updated minimum contact depth -->
+            </ode>
+          </contact>
+        </surface>
+      </collision>
+      <visual name='wheel_urdf_2_UCS1_fixed_joint_lump__wheel_urdf_2_Base_visual'>
+        <pose>-0.00048 0.00039 0.07671 0 1.5708 0</pose>
+        <geometry>
+          <mesh>
+            <scale>0.001 0.001 0.001</scale>
+            <uri>model://bigbot/meshes/wheel.dae</uri>
+          </mesh>
+        </geometry>
+      </visual>
+    </link>
+    
+    <plugin filename="gz-sim-diff-drive-system" name="gz::sim::systems::DiffDrive">
+
+       <!-- wheels -->
+       <left_joint>bigbot_UCSLF_to_wheel_urdf_3_UCS1</left_joint>
+       <left_joint>bigbot_UCSLR_to_wheel_urdf_4_UCS1</left_joint>
+       <right_joint>bigbot_UCSRF_to_wheel_urdf_1_UCS1</right_joint>
+       <right_joint>bigbot_UCSRR_to_wheel_urdf_2_UCS1</right_joint>
+
+       <!-- kinematics -->
+       <wheel_separation>0.489</wheel_separation>
+       <wheel_radius>0.165</wheel_radius>
+
+       <!-- limits -->
+       <max_linear_acceleration>30.0</max_linear_acceleration>
+       <max_angular_acceleration>40.0</max_angular_acceleration>
+       <max_linear_velocity>3.0</max_linear_velocity>
+       <max_angular_velocity>20.0</max_angular_velocity>
+
+       <topic>cmd_vel</topic>
+
+       <odom_topic>odom</odom_topic> 
+       <frame_id>odom</frame_id>
+       <child_frame_id>base_footprint</child_frame_id>
+       <odom_publisher_frequency>10</odom_publisher_frequency> 
+
+       <!-- <tf_topic>/tf_gazebo</tf_topic> -->
+
+    </plugin>
+
+    <plugin filename="gz-sim-navsat-system" name="gz::sim::systems::NavSat">
+    </plugin>
+
+    <plugin filename="gz-sim-joint-state-publisher-system" name="gz::sim::systems::JointStatePublisher">
+      <topic>joint_states</topic>
+      <joint_name>bigbot_UCSLF_to_wheel_urdf_3_UCS1</joint_name>
+      <joint_name>bigbot_UCSLR_to_wheel_urdf_4_UCS1</joint_name>
+      <joint_name>bigbot_UCSRF_to_wheel_urdf_1_UCS1</joint_name>
+      <joint_name>bigbot_UCSRR_to_wheel_urdf_2_UCS1</joint_name> 
+    </plugin>
+
+    
+
+  </model>
+</sdf>

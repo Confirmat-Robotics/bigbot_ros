@@ -1,0 +1,269 @@
+# GPS WPF CHANGES: 
+# - amcl params where removed. They are not needed because global localization is provided
+#   by an ekf node on robot_localization fusing gps data with local odometry sources
+# - static layer is removed from both costmaps, in this tutorial we assume there is no map
+#   of the environment
+# - global costmap is set to be rolling to allow the robot to traverse big environment by
+#   following successive relatively close waypoints that fit in a smaller rolling costmap
+
+bt_navigator:
+  ros__parameters:
+    default_nav_to_pose_bt_xml: "$(find-pkg-share bigbot_gazebo)/config/test_pose.xml"
+    default_nav_through_poses_bt_xml: "$(find-pkg-share bigbot_gazebo)/config/bigbot_tru_poses.xml"
+    enable_groot_monitoring: true
+    default_server_timeout: 5000  # [in ms]
+    planner_patience: 5.0         # wait this long before failing a planner request
+    controller_patience: 5.0      # wait before failing controller
+    global_frame: "map"
+    robot_base_frame: "base_link"
+    odom_topic: "/fixposition/odometry_enu"
+    # Error code parameters
+    follow_path_error_code: "follow_path_error_code"
+    compute_path_error_code: "compute_path_error_code"
+    smoother_error_code: "smoother_error_code"
+
+collision_monitor:
+  ros__parameters:
+    use_sim_time: false  # Set to true if running in simulation
+    base_frame_id: "base_link"
+    odom_frame_id: "odom"
+    cmd_vel_in_topic: "cmd_vel"
+    cmd_vel_out_topic: "cmd_vel_safe"
+    transform_tolerance: 0.1
+    source_timeout: 0.5
+    stop_pub_timeout: 0.5
+    observation_sources: ["scan"]
+    scan:
+      type: "scan"
+      topic: "/scan"
+      enabled: true
+      source_timeout: 0.5
+      sensor_frame: Assembly_TIM_lidar_urdf_1_UCS2
+    polygons: ["stop_zone", "slow_zone"]
+    stop_zone:
+      type: "polygon"
+      points: "[[1.5, 1.0], [1.5, -1.0], [-1.0, -1.0], [-1.0, 1.0]]" # front 1.5 m, back 1m, left and right 1m
+      action_type: "stop"
+      min_points: 1
+      visualize: true
+      polygon_pub_topic: "stop_zone_polygon"
+    slow_zone:
+      type: "polygon"
+      points: "[[2.0, 1.2], [2.0, -1.2], [-2.0, -1.2], [-2.0, 1.2]]"
+      action_type: "limit"
+      min_points: 1
+      visualize: true
+      polygon_pub_topic: "slow_zone_polygon"
+      linear_velocity_limit: 0.3   # [m/s] linear velocity speed
+      angular_velocity_limit: 0.5  # [rad/s] angular speed
+    base_shift_correction: false
+    bond_disable_heartbeat_timeout: false
+    bond_heartbeat_period: 0.1
+    start_type_description_service: false
+    state_topic: "collision_monitor_state"
+
+controller_server:
+  ros__parameters:
+    controller_frequency: 10.0 # frequency is request for update rate of the path request
+    min_x_velocity_threshold: 0.001
+    min_y_velocity_threshold: 0.5
+    min_theta_velocity_threshold: 0.001
+    failure_tolerance: 5.0     # This prevents premature failure on short blockages
+    progress_checker_plugins: ["progress_checker"]
+    goal_checker_plugins: ["general_goal_checker"] # "precise_goal_checker"
+    controller_plugins: ["FollowPath"]
+    
+    current_goal_checker: "general_goal_checker"
+    current_progress_checker: "progress_checker"
+
+    # Progress checker parameters
+    progress_checker:
+      plugin: "nav2_controller::SimpleProgressChecker"
+      required_movement_radius: 0.5
+      movement_time_allowance: 60.0 # 60 seconds to allow for movement (waiting), otherwise error
+    general_goal_checker:
+      stateful: true
+      plugin: "nav2_controller::SimpleGoalChecker"
+      xy_goal_tolerance: 0.4 #binnen 0.4 is goed, normaal is 0.25, grter is makkerlijk
+      yaw_goal_tolerance: 0.4 # was 0.4
+    # DWB parameters
+    FollowPath:
+      plugin: "nav2_regulated_pure_pursuit_controller::RegulatedPurePursuitController"
+      desired_linear_vel: 1.2 # [m/s] top speed 
+      lookahead_dist: 0.8 
+      min_lookahead_dist: 0.5
+      max_lookahead_dist: 1.2
+      lookahead_time: 1.5
+      rotate_to_heading_angular_vel: 0.0
+      transform_tolerance: 0.1
+      use_velocity_scaled_lookahead_dist: false
+      min_approach_linear_velocity: 0.05
+      approach_velocity_scaling_dist: 0.6
+      use_collision_detection: true
+      max_allowed_time_to_collision_up_to_carrot: 1.0
+      use_regulated_linear_velocity_scaling: true
+      use_fixed_curvature_lookahead: false # if true lot of meandering around path (drunken robot)
+      curvature_lookahead_dist: 0.25
+      use_cost_regulated_linear_velocity_scaling: true
+      regulated_linear_scaling_min_radius: 0.9
+      regulated_linear_scaling_min_speed: 0.25
+      use_rotate_to_heading: false
+      allow_reversing: true
+      rotate_to_heading_min_angle: 0.0
+      max_angular_accel: 2.0 # was 1.0
+      max_robot_pose_search_dist: 10.0 
+      
+local_costmap:
+  local_costmap:
+    ros__parameters:
+      update_frequency: 5.0
+      publish_frequency: 2.0
+      global_frame: map
+      robot_base_frame: base_link
+      rolling_window: true
+      width: 15    # [integer] 15x15 because lidar looks far away (3x3 insufficient)
+      height: 15   # [integer] 15x15 because lidar looks far away (3x3 insufficient)
+      resolution: 0.05
+      robot_radius: 0.7
+      transform_tolerance: 0.3
+      plugins: ["voxel_layer", "inflation_layer"]
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.8
+      voxel_layer:
+        plugin: "nav2_costmap_2d::VoxelLayer"
+        enabled: true
+        publish_voxel_map: false # very much and not needed
+        origin_z: -2.5
+        z_resolution: 0.1 # TODO: make this 2.5 m and than 3 voxels (-2.5,0, and 2.5 m = functionally the same)
+        z_voxels: 50    # 50 * 0.1 = 5 m height, so from -2.5 to 2.5 m (increased to allow for larger obstacles)
+        max_obstacle_height: 2.5
+        mark_threshold: 1
+        observation_sources: scan
+        scan:
+          topic: /scan
+          clearing: true
+          marking: true
+          data_type: "LaserScan"
+          sensor_frame: Assembly_TIM_lidar_urdf_1_UCS2
+          raytrace_max_range: 10.0
+          raytrace_min_range: 0.1
+          obstacle_max_range: 6.0
+          obstacle_min_range: 0.1
+          inf_is_valid: true
+      always_send_full_costmap: true
+
+global_costmap:
+  global_costmap:
+    ros__parameters:
+      update_frequency: 1.0
+      publish_frequency: 1.0
+      global_frame: map
+      robot_base_frame: base_link
+      robot_radius: 0.7
+      resolution: 0.1
+      transform_tolerance: 0.3  # Increased from default to handle delays
+      rolling_window: true  # rolling costmap 50x40 m
+      width: 50
+      height: 50
+      track_unknown_space: false
+      plugins: ["obstacle_layer", "inflation_layer"]
+      obstacle_layer:
+        plugin: "nav2_costmap_2d::ObstacleLayer"
+        track_unknown_space: false
+        footprint_clearing_enabled: true
+        enabled: true
+        observation_sources: scan
+        scan:
+          topic: /scan
+          max_obstacle_height: 200.0
+          clearing: true
+          marking: true
+          data_type: "LaserScan"
+          sensor_frame: Assembly_TIM_lidar_urdf_1_UCS2
+          raytrace_max_range: 10.0
+          raytrace_min_range: 0.1
+          obstacle_max_range: 6.0
+          obstacle_min_range: 0.1
+          inf_is_valid: true
+      inflation_layer:
+        plugin: "nav2_costmap_2d::InflationLayer"
+        cost_scaling_factor: 3.0
+        inflation_radius: 0.8
+      always_send_full_costmap: true
+
+map_saver:
+  ros__parameters:
+    save_map_timeout: 5.0
+    free_thresh_default: 0.25
+    occupied_thresh_default: 0.65
+    map_subscribe_transient_local: true
+
+planner_server:
+  ros__parameters:
+    replanning_frequency: 0.0 # Disable replanning, only the original plan must be followed (agro)
+    expected_planner_frequency: 0.33
+    planner_plugins: ["GridBased"]
+    GridBased:
+      plugin: "nav2_bigbot_planner::BigbotPlanner"
+      interpolation_resolution: 0.1
+      minimum_radius: 1.4
+
+smoother_server:
+  ros__parameters:
+    smoother_plugins: ["simple_smoother"]
+    simple_smoother:
+      plugin: "nav2_smoother::SimpleSmoother"
+      tolerance: 1.0e-10
+      max_its: 1000
+      do_refinement: true
+
+behavior_server:
+  ros__parameters:
+    local_costmap_topic: local_costmap/costmap_raw
+    global_costmap_topic: global_costmap/costmap_raw
+    local_footprint_topic: local_costmap/published_footprint
+    global_footprint_topic: global_costmap/published_footprint
+    cycle_frequency: 10.0
+    behavior_plugins: ["backup", "drive_on_heading", "wait"]  
+    # no "spin" for bigbot
+    # "assisted_telop" done in different way (switch from manual/nav2)
+    backup:
+      plugin: "nav2_behaviors::BackUp"
+    drive_on_heading:
+      plugin: "nav2_behaviors::DriveOnHeading"
+    wait:
+      plugin: "nav2_behaviors::Wait"
+    local_frame: odom
+    global_frame: map
+    robot_base_frame: base_link
+    transform_tolerance: 0.1
+    simulate_ahead_time: 2.0
+    max_rotational_vel: 1.0
+    min_rotational_vel: 0.4
+    rotational_acc_lim: 3.2
+
+waypoint_follower:
+  ros__parameters:
+    loop_rate: 20
+    stop_on_failure: false
+    waypoint_task_executor_plugin: "wait_at_waypoint"
+    wait_at_waypoint:
+      plugin: "nav2_waypoint_follower::WaitAtWaypoint"
+      enabled: true
+      waypoint_pause_duration: 200
+
+velocity_smoother:
+  ros__parameters:
+    smoothing_frequency: 20.0
+    scale_velocities: false
+    feedback: "OPEN_LOOP"
+    max_velocity: [0.26, 0.0, 1.0]
+    min_velocity: [-0.26, 0.0, -1.0]
+    max_accel: [2.5, 0.0, 3.2]
+    max_decel: [-2.5, 0.0, -3.2]
+    odom_topic: "/fixposition/odometry_enu"
+    odom_duration: 0.1
+    deadband_velocity: [0.0, 0.0, 0.0]
+    velocity_timeout: 1.0

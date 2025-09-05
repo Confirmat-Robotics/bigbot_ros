@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from setuptools import setup
 from glob import glob
 
@@ -17,9 +18,9 @@ setup(
     zip_safe=True,
     maintainer='Edward Hage',
     maintainer_email='edward@confirmatrobotics.com',
-    description='Control Gazebo model',
-    license='BSD',
-    tests_require=['pytest'],
+    description='Bigbot control functionalities',
+    license='Apache-2.0',
+    extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
         ],

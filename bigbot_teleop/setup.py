@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 from setuptools import setup
 import os
 from glob import glob
@@ -16,11 +17,11 @@ setup(
     ],
     install_requires=['setuptools'],
     zip_safe=True,
-    maintainer='bigbot',
+    maintainer='Edward Hage',
     maintainer_email='edward@confirmatrobotics.com',
-    description='TODO: Package description',
-    license='BSD',
-    tests_require=['pytest'],
+    description='Teleoperation package for BigBot',
+    license='Apache-2.0',
+    extras_require={'test': ['pytest']},
     entry_points={
         'console_scripts': [
             'joymapper = bigbot_teleop.joymapper:main',

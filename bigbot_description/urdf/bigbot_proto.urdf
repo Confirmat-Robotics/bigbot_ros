@@ -1,0 +1,664 @@
+<?xml version="1.0" ?>
+<robot name="Bigbot Proto" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:include filename="$(find bigbot_description)/urdf/wiel_proto.urdf" />
+  <material name="natogreen"><color rgba="0.111 0.2 0.111 1.0" /></material>
+  
+  <gazebo reference="base_l">
+    <material>natogreen</material>
+  </gazebo>
+  
+  <!-- driving the camera and wheels -->
+    <ros2_control name="GazeboSystem" type="system">
+      <hardware>
+        <plugin>gazebo_ros2_control/GazeboSystem</plugin>
+      </hardware>
+      <joint name="dome_basis_urdf_1_UCS2_to_dome_rot_hor_urdf_1_UCS1">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="dome_rot_hor_urdf_1_UCS2_to_dome_rot_camera_urdf_1_UCS1">
+        <command_interface name="velocity"/>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="Assembly_static_urdf_1_UCSLF_to_wiel_urdf_1_UCS1">
+        <command_interface name="velocity">
+          <param name="min">-3.1415</param>
+          <param name="max">3.1415</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+
+      <joint name="Assembly_static_urdf_1_UCSLR_to_wiel_urdf_2_UCS1">
+        <command_interface name="velocity">
+          <param name="min">-3.1415</param>
+          <param name="max">3.1415</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      <joint name="Assembly_static_urdf_1_UCSRF_to_wiel_urdf_3_UCS1">
+        <command_interface name="velocity">
+          <param name="min">-3.1415</param>
+          <param name="max">3.1415</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+	  <joint name="Assembly_static_urdf_1_UCSRR_to_wiel_urdf_4_UCS1">
+        <command_interface name="velocity">
+          <param name="min">-3.1415</param>
+          <param name="max">3.1415</param>
+        </command_interface>
+        <state_interface name="position"/>
+        <state_interface name="velocity"/>
+      </joint>
+      </ros2_control>
+      
+  <gazebo>
+    <plugin filename="libgazebo_ros2_control.so" name="gazebo_ros2_control">
+    <robot_param>robot_description</robot_param>
+    <robot_namespace></robot_namespace>
+    <robot_param_node>robot_state_publisher</robot_param_node>
+      <parameters>$(find bigbot_control)/config/control.yaml</parameters>
+    </plugin>
+  </gazebo>
+    
+<!-- sensor camera -->   
+<gazebo reference="dome_rot_camera_urdf_1_UCS2">
+    <sensor type="camera" name="poecamera">
+	  <always_on>true</always_on>
+      <visualize>true</visualize>
+      <update_rate>30.0</update_rate>
+      <camera name="head">
+        <horizontal_fov>1.3962634</horizontal_fov>
+        <image>
+          <height>800</height>
+          <format>R8G8B8</format>
+        </image>
+        <clip>
+          <near>0.02</near>
+          <far>300</far>
+        </clip>
+        <noise>
+          <type>gaussian</type>
+          <!-- Noise is sampled independently per pixel on each frame.
+               That pixel's noise value is added to each of its color
+               channels, which at that point lie in the range [0,1]. -->
+          <mean>0.0</mean>
+          <stddev>0.007</stddev>
+        </noise>
+      </camera>
+    <plugin name="camera_controller" filename="libgazebo_ros_camera.so">
+        <alwaysOn>true</alwaysOn>
+        <updateRate>0.0</updateRate>
+        <cameraName>rrbot/camera1</cameraName>
+        <imageTopicName>image_raw</imageTopicName>
+        <cameraInfoTopicName>camera_info</cameraInfoTopicName>
+        <frameName>camera_link</frameName>
+        <hackBaseline>0.07</hackBaseline>
+        <distortionK1>0.0</distortionK1>
+        <distortionK2>0.0</distortionK2>
+        <distortionK3>0.0</distortionK3>
+        <distortionT1>0.0</distortionT1>
+        <distortionT2>0.0</distortionT2>
+      </plugin> 
+    </sensor>
+  </gazebo>
+  
+  	<gazebo reference="Assembly_TIM_lidar_urdf_1_UCS2">
+	 <sensor name="lidar_front" type="ray">
+        <always_on>true</always_on>
+        <visualize>true</visualize>
+        <pose>0 0 0 0 0 0</pose>
+        <update_rate>5</update_rate>
+        <ray>
+          <scan>
+            <horizontal>
+              <samples>360</samples>
+              <resolution>1.000000</resolution>
+              <min_angle>-2.000000</min_angle>
+              <max_angle>2.0000</max_angle>
+            </horizontal>
+          </scan>
+          <range>
+            <min>0.10000</min>
+            <max>5.0</max>
+            <resolution>0.015000</resolution>
+          </range>
+          <noise>
+            <type>gaussian</type>
+            <mean>0.0</mean>
+            <stddev>0.01</stddev>
+          </noise>
+        </ray>
+        
+        <plugin name="bigbot_laserscan" filename="libgazebo_ros_ray_sensor.so">
+          <ros>
+            <remapping>~/out:=scan</remapping>
+          </ros>
+          <output_type>sensor_msgs/LaserScan</output_type>
+          <frame_name>base_scan</frame_name>
+        </plugin>
+      </sensor>
+      </gazebo>
+	
+	<gazebo reference="Assembly_static_urdf_1_UCSIMU">
+	<sensor name="imu_sensor" type="imu">
+        <always_on>true</always_on>
+        <update_rate>200</update_rate>
+        <imu>
+          <angular_velocity>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>2e-4</stddev>
+              </noise>
+            </z>
+          </angular_velocity>
+          <linear_acceleration>
+            <x>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </x>
+            <y>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </y>
+            <z>
+              <noise type="gaussian">
+                <mean>0.0</mean>
+                <stddev>1.7e-2</stddev>
+              </noise>
+            </z>
+          </linear_acceleration>
+        </imu>
+        <plugin name="bigbot_imu" filename="libgazebo_ros_imu_sensor.so">
+          <ros>
+            <remapping>~/out:=imu</remapping>
+          </ros>
+        </plugin>
+      </sensor>
+      	</gazebo>
+  
+	<link name="base_link"/>
+	<link name="base_l">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/static_urdf.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<collision>
+			<origin xyz="0.00000 0.00000 0.32" rpy="0 0 0" />
+			<geometry>
+				<box size="0.42 0.36 0.32"/> <!--  diepte/lengte, breedte hoogte -->
+			</geometry>
+		</collision>
+		<inertial>
+			<origin xyz="0.00018 -0.00000 0.00282" />
+			<mass value="19.4991529221146" />
+			<inertia ixx="0.689984017593592" ixy="0.00413258112693761" ixz="-0.00379380527244858" iyy="1.19302812494463" iyz="0.000780879988814764" izz="1.53880001964217" />
+		</inertial>
+	</link>
+	<joint name="base_link_to_base_l" type="fixed">
+		<parent link="base_link" />
+		<child link="base_l" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSRF">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSRF" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSRF" />
+		<origin xyz="0.29393 -0.16887 0.16907" rpy="1.5707963267948966 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSRF_to_wiel_urdf_3_UCS1" type="continuous">
+		<parent link="Assembly_static_urdf_1_UCSRF" />
+		<child link="wiel_urdf_3_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 -1" />  <!-- forward is -1 for RIGHT SIDE -->
+	</joint>
+
+	<xacro:bigbot_wheel wheel_linkname="wiel_urdf_3" />
+
+	<link name="Assembly_static_urdf_1_UCSLF">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLF" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLF" />
+		<origin xyz="0.29393 0.16887 0.16907" rpy="-1.5707963267948966 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSLF_to_wiel_urdf_1_UCS1" type="continuous">
+		<parent link="Assembly_static_urdf_1_UCSLF" />
+		<child link="wiel_urdf_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 1" />
+	</joint>
+
+	<xacro:bigbot_wheel wheel_linkname="wiel_urdf_1" />
+	<link name="Assembly_static_urdf_1_UCSLR">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLR" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLR" />
+		<origin xyz="-0.26113 0.16887 0.16907" rpy="-1.5707963267948966 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSLR_to_wiel_urdf_2_UCS1" type="continuous">
+		<parent link="Assembly_static_urdf_1_UCSLR" />
+		<child link="wiel_urdf_2_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 1" />
+	</joint>
+	<xacro:bigbot_wheel wheel_linkname="wiel_urdf_2" />
+	<link name="Assembly_static_urdf_1_UCSRR">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSRR" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSRR" />
+		<origin xyz="-0.26113 -0.16887 0.16907" rpy="1.5707963267948966 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSRR_to_wiel_urdf_4_UCS1" type="continuous">
+		<parent link="Assembly_static_urdf_1_UCSRR" />
+		<child link="wiel_urdf_4_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 -1" /> <!-- forward is -1 for RIGHT SIDE -->
+	</joint>
+	<xacro:bigbot_wheel wheel_linkname="wiel_urdf_4" />	
+	<link name="Assembly_static_urdf_1_UCSIMU">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+      	
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSIMU" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSIMU" />
+		<origin xyz="0.10000 -0.26400 0.41600" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSLID1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLID1" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLID1" />
+		<origin xyz="0.19840 -0.07800 0.44800" rpy="0.0 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSLID1_to_Assembly_lid_empty_1_UCS1" type="fixed">
+		<parent link="Assembly_static_urdf_1_UCSLID1" />
+		<child link="Assembly_lid_empty_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_lid_empty_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="Assembly_lid_empty_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/Assembly_lid_empty.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="0.00078 0.00182 0.00001" />
+			<mass value="0.0422018310367799" />
+			<inertia ixx="2.26883416639297E-05" ixy="-1.32522472995333E-15" ixz="2.54374299402116E-18" iyy="0.000104174380477524" iyz="-4.41247038907022E-18" izz="0.00012641391672078" />
+		</inertial>
+	</link>
+	<joint name="Assembly_lid_empty_1_UCS1_to_Assembly_lid_empty_1_Base" type="fixed">
+		<parent link="Assembly_lid_empty_1_UCS1" />
+		<child link="Assembly_lid_empty_1_Base" />
+		<origin xyz="0.18200 -0.07800 0.00000" rpy="0.0 0.0 1.5707963267948966" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSLID2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLID2" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLID2" />
+		<origin xyz="0.19840 0.07800 0.44800" rpy="0.0 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSLID2_to_Assembly_gps_antenna_1_UCS1" type="fixed">
+		<parent link="Assembly_static_urdf_1_UCSLID2" />
+		<child link="Assembly_gps_antenna_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_gps_antenna_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="Assembly_gps_antenna_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/Assembly_gps_antenna_reduced.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="0.00041 0.00193 0.00062" />
+			<mass value="0.694126486208747" />
+			<inertia ixx="0.00170793924837069" ixy="0.000336973454942204" ixz="9.76469315243594E-07" iyy="0.00152322687173902" iyz="-7.49704034577007E-08" izz="0.00199292730266541" />
+		</inertial>
+	</link>
+	
+	<gazebo reference="Assembly_gps_antenna_1_Base">
+	<sensor name="my_gps" type="gps">
+        <!-- ensure the sensor is active (required) -->
+        <always_on>true</always_on>
+        <update_rate>30</update_rate>
+        <plugin name="gps_plugin" filename="libgazebo_ros_gps_sensor.so">
+          <ros>
+            <namespace></namespace>
+            <remapping>~/out:=gps/fix_base</remapping>
+          </ros>
+        </plugin>
+      </sensor>
+      </gazebo>
+	
+	
+	
+	
+	
+	
+	
+	<joint name="Assembly_gps_antenna_1_UCS1_to_Assembly_gps_antenna_1_Base" type="fixed">
+		<parent link="Assembly_gps_antenna_1_UCS1" />
+		<child link="Assembly_gps_antenna_1_Base" />
+		<origin xyz="-0.06221 -0.07948 -0.09045" rpy="1.5707963267948966 0.0 1.5707963267948966" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSLID3">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLID3" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLID3" />
+		<origin xyz="-0.16560 0.07800 0.44800" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSLID4">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSLID4" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSLID4" />
+		<origin xyz="-0.16560 -0.07800 0.44800" rpy="0.0 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSLID4_to_Assembly_camera_en_wifi_1_UCS1" type="fixed">
+		<parent link="Assembly_static_urdf_1_UCSLID4" />
+		<child link="Assembly_camera_en_wifi_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_camera_en_wifi_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="Assembly_camera_en_wifi_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/Assembly_camera_en_wifi.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="-0.00124 0.00477 -0.00348" />
+			<mass value="3.52251245660649" />
+			<inertia ixx="0.132134402779846" ixy="0.0378991969323527" ixz="-0.00230808858320527" iyy="0.0286181458868898" iyz="0.00380687324070372" izz="0.154447805990355" />
+		</inertial>
+	</link>
+	<joint name="Assembly_camera_en_wifi_1_UCS1_to_Assembly_camera_en_wifi_1_Base" type="fixed">
+		<parent link="Assembly_camera_en_wifi_1_UCS1" />
+		<child link="Assembly_camera_en_wifi_1_Base" />
+		<origin xyz="0.34686 0.11274 -0.09045" rpy="1.5707963267948966 0.0 1.5707963267948966" />
+	</joint>
+	<link name="Assembly_camera_en_wifi_1_UCS2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="Assembly_camera_en_wifi_1_Base_to_Assembly_camera_en_wifi_1_UCS2" type="fixed">
+		<parent link="Assembly_camera_en_wifi_1_Base" />
+		<child link="Assembly_camera_en_wifi_1_UCS2" />
+		<origin xyz="-0.15652 0.49645 -0.35124" rpy="-1.5707963267948966 -1.5707963267948966 0.0" />
+	</joint>
+	<joint name="Assembly_camera_en_wifi_1_UCS2_to_dome_basis_urdf_1_UCS1" type="fixed">
+		<parent link="Assembly_camera_en_wifi_1_UCS2" />
+		<child link="dome_basis_urdf_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="dome_basis_urdf_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="dome_basis_urdf_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/dome_basis_urdf.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="0.00001 -0.00139 -0.00002" />
+			<mass value="0.416125776117696" />
+			<inertia ixx="0.000477006310545694" ixy="-1.97891418222002E-07" ixz="2.34584293275312E-05" iyy="0.000852192484477893" iyz="3.42757990738414E-07" izz="0.000449918849571743" />
+		</inertial>
+	</link>
+	<joint name="dome_basis_urdf_1_UCS1_to_dome_basis_urdf_1_Base" type="fixed">
+		<parent link="dome_basis_urdf_1_UCS1" />
+		<child link="dome_basis_urdf_1_Base" />
+		<origin xyz="0.00000 -0.00000 0.15504" rpy="1.5707963267948966 0.0 0.0" />
+	</joint>
+	<link name="dome_basis_urdf_1_UCS2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="dome_basis_urdf_1_Base_to_dome_basis_urdf_1_UCS2" type="fixed">
+		<parent link="dome_basis_urdf_1_Base" />
+		<child link="dome_basis_urdf_1_UCS2" />
+		<origin xyz="0.00000 -0.12203 0.00000" rpy="-1.5707963267948966 0.0 0.0" />
+	</joint>
+	<joint name="dome_basis_urdf_1_UCS2_to_dome_rot_hor_urdf_1_UCS1" type="revolute">
+		<parent link="dome_basis_urdf_1_UCS2" />
+		<child link="dome_rot_hor_urdf_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 1" />
+		<limit effort="5.0" velocity="2.0" lower="-3.1415" upper="3.1415" />
+	</joint>
+	<link name="dome_rot_hor_urdf_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="dome_rot_hor_urdf_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/dome_rot_hor_urdf.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="0.00000 -0.00069 0.00000" />
+			<mass value="1.05727439029805" />
+			<inertia ixx="0.00325534991558153" ixy="-6.5722287787811E-16" ixz="1.45519152283693E-18" iyy="0.00234893495053513" iyz="-4.15757765886586E-19" izz="0.00269210499681193" />
+		</inertial>
+	</link>
+	<joint name="dome_rot_hor_urdf_1_UCS1_to_dome_rot_hor_urdf_1_Base" type="fixed">
+		<parent link="dome_rot_hor_urdf_1_UCS1" />
+		<child link="dome_rot_hor_urdf_1_Base" />
+		<origin xyz="0.00000 -0.00000 0.12204" rpy="1.5707963267948966 0.0 0.0" />
+	</joint>
+	<link name="dome_rot_hor_urdf_1_UCS2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="dome_rot_hor_urdf_1_Base_to_dome_rot_hor_urdf_1_UCS2" type="fixed">
+		<parent link="dome_rot_hor_urdf_1_Base" />
+		<child link="dome_rot_hor_urdf_1_UCS2" />
+		<origin xyz="0.00000 0.00000 -0.03750" rpy="0.0 0.0 0.0" />
+	</joint>
+	<joint name="dome_rot_hor_urdf_1_UCS2_to_dome_rot_camera_urdf_1_UCS1" type="revolute">
+		<parent link="dome_rot_hor_urdf_1_UCS2" />
+		<child link="dome_rot_camera_urdf_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+		<axis xyz="0 0 1" />
+		<limit effort="5.0" velocity="2.0" lower="-3.1415" upper="3.1415" />
+	</joint>
+	<link name="dome_rot_camera_urdf_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="dome_rot_camera_urdf_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/dome_rot_camera_urdf.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="-0.00000 -0.00040 -0.00000" />
+			<mass value="1.82441947464832" />
+			<inertia ixx="0.00629100376617898" ixy="2.53497166392647E-05" ixz="6.08533434648965E-09" iyy="0.00330986336406898" iyz="9.26842462230826E-09" izz="0.00609883443793825" />
+		</inertial>
+	</link>
+	<joint name="dome_rot_camera_urdf_1_UCS1_to_dome_rot_camera_urdf_1_Base" type="fixed">
+		<parent link="dome_rot_camera_urdf_1_UCS1" />
+		<child link="dome_rot_camera_urdf_1_Base" />
+		<origin xyz="0.00000 0.00000 0.03750" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="dome_rot_camera_urdf_1_UCS2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="dome_rot_camera_urdf_1_Base_to_dome_rot_camera_urdf_1_UCS2" type="fixed">
+		<parent link="dome_rot_camera_urdf_1_Base" />
+		<child link="dome_rot_camera_urdf_1_UCS2" />
+		<origin xyz="0.04550 0.00000 0.00000" rpy="-1.57079632679 0.0 0.0" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSFRONT">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSFRONT" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSFRONT" />
+		<origin xyz="0.44000 0.00000 0.30400" rpy="0.0 0.0 0.0" />
+	</joint>
+	<joint name="Assembly_static_urdf_1_UCSFRONT_to_Assembly_TIM_lidar_urdf_1_UCS1" type="fixed">
+		<parent link="Assembly_static_urdf_1_UCSFRONT" />
+		<child link="Assembly_TIM_lidar_urdf_1_UCS1" />
+		<origin xyz="0.00000 0.00000 0.00000" rpy="0.0 0.0 0.0" />
+	</joint>
+	<link name="Assembly_TIM_lidar_urdf_1_UCS1">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<link name="Assembly_TIM_lidar_urdf_1_Base">
+		<visual>
+			<origin xyz="0.00000 0.00000 0.00000" rpy="0 0 0" />
+			<geometry>
+				<mesh filename="package://bigbot_description/models/bigbot_proto/meshes/Assembly_TIM_lidar_urdf.dae" scale="0.0100 0.0100 0.0100" />
+			</geometry>
+		</visual>
+		<inertial>
+			<origin xyz="-0.00000 0.00002 0.00044" />
+			<mass value="0.264540242643839" />
+			<inertia ixx="0.000242837724454439" ixy="5.27740257332658E-08" ixz="-3.68967337176339E-08" iyy="0.000319978000541157" iyz="6.06104566838926E-07" izz="0.00018966500011376" />
+		</inertial>
+	</link>
+	<joint name="Assembly_TIM_lidar_urdf_1_UCS1_to_Assembly_TIM_lidar_urdf_1_Base" type="fixed">
+		<parent link="Assembly_TIM_lidar_urdf_1_UCS1" />
+		<child link="Assembly_TIM_lidar_urdf_1_Base" />
+		<origin xyz="-0.00000 0.00000 0.00000" rpy="0.0 0.0 1.5707963267948966" />
+	</joint>
+	<link name="Assembly_TIM_lidar_urdf_1_UCS2">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="Assembly_TIM_lidar_urdf_1_Base_to_Assembly_TIM_lidar_urdf_1_UCS2" type="fixed">
+		<parent link="Assembly_TIM_lidar_urdf_1_Base" />
+		<child link="Assembly_TIM_lidar_urdf_1_UCS2" />
+		<origin xyz="0.00000 0.00000 0.08500" rpy="0.0 0.0 -1.5707963267948966" />
+	</joint>
+	<link name="Assembly_static_urdf_1_UCSREAR">
+		<inertial>
+			<mass value="2e-06" />
+			<inertia ixx="1.1e-09" ixy="0" ixz="0" iyy="1.1e-09" iyz="0" izz="1.1e-09" />
+		</inertial>
+	</link>
+	<joint name="base_l_to_Assembly_static_urdf_1_UCSREAR" type="fixed">
+		<parent link="base_l" />
+		<child link="Assembly_static_urdf_1_UCSREAR" />
+		<origin xyz="-0.40720 0.00000 0.30400" rpy="0.0 0.0 0.0" />
+	</joint>
+</robot>

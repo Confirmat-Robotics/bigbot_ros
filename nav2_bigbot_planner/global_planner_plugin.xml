@@ -1,0 +1,5 @@
+<library path="nav2_bigbot_planner_plugin">
+	<class type="nav2_bigbot_planner::BigbotPlanner" base_class_type="nav2_core::GlobalPlanner">
+	  <description>Planner for outdoor with circle to right orientation of goal pose. This allows large minimum radius so that a bigbot can pull a cart without sheering.</description>
+	</class>
+</library>

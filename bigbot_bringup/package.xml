@@ -3,9 +3,19 @@
 <package format="3">
   <name>bigbot_bringup</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Bigbot bringup and transform utilities for simulation and real robot.</description>
   <maintainer email="edward@confirmatrobotics.com">Edward Hage</maintainer>
   <license>BSD</license>
+
+  <depend>rclpy</depend>
+  <depend>tf2_ros</depend>
+  <depend>std_msgs</depend>
+  <depend>sensor_msgs</depend>
+  <depend>nav_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>bigbot_interfaces</depend>
+  <depend>scipy</depend>
+  <depend>numpy</depend>
 
   <test_depend>ament_copyright</test_depend>
   <test_depend>ament_flake8</test_depend>

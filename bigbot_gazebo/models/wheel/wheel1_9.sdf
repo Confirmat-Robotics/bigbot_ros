@@ -1,0 +1,63 @@
+<sdf version="1.9">
+  <model name="wheel">
+    <static>true</static>
+    <link name="wheel_link">
+      <!-- Lift the entire link by 0.30 meters -->
+      <pose>0 0 0.17 0 0 0</pose>
+      
+      <!-- Visual definition -->
+      <visual name="wheel_visual">
+        <geometry>
+          <mesh>
+            <uri>model://wheel/meshes/wheel.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <material>
+          <pbr>
+            <metal>
+              <albedo_map>model://wheel/textures/wheel_diffuse.png</albedo_map>
+              <normal_map>model://wheel/textures/wheel_normalmap.png</normal_map>
+              <roughness_map>model://wheel/textures/wheel_roughness.png</roughness_map>
+            </metal>
+          </pbr>
+        </material>
+      </visual>
+
+      <!-- Collision definition -->
+      <collision name="wheel_collision">
+        <geometry>
+          <mesh>
+            <uri>model://wheel/meshes/wheel.dae</uri>
+            <scale>0.001 0.001 0.001</scale>
+          </mesh>
+        </geometry>
+        <surface>
+          <contact>
+            <collide_without_contact>false</collide_without_contact>
+          </contact>
+          <bounce>
+            <restitution_coefficient>0.0</restitution_coefficient>
+          </bounce>
+          <friction>
+            <ode>
+              <mu>1.0</mu>
+              <mu2>1.0</mu2>
+            </ode>
+          </friction>
+        </surface>
+      </collision>
+
+      <!-- Inertial properties -->
+      <inertial>
+        <mass>0.5</mass>
+        <inertia>
+          <ixx>0.001</ixx>
+          <iyy>0.001</iyy>
+          <izz>0.001</izz>
+        </inertia>
+      </inertial>
+    </link>
+  </model>
+</sdf>
+

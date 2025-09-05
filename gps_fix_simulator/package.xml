@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="3">
+  <name>gps_fix_simulator</name>
+  <version>1.0.0</version>
+  <description>Gazebo plugin to publish TFs from ECEF to POI and FP_ENU</description>
+  <maintainer email="edward@confirmarobotics.com">Edward Hage</maintainer>
+  <license>Apache 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rclcpp</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf2</depend>
+  <depend>tf2_geometry_msgs</depend>
+  <depend>geometry_msgs</depend>
+  <depend>gz_sim_vendor</depend>
+  <depend>gz-plugin2</depend>
+    
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
+

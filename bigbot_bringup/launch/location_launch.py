@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import os
 import launch
 from ament_index_python.packages import get_package_share_directory
@@ -11,7 +12,6 @@ def generate_launch_description():
 
     gps_config_directory = os.path.join(get_package_share_directory('ublox_gps'), 'config')
     gps_params = os.path.join(get_package_share_directory('bigbot_bringup'), 'zed_f9p.yaml')
-    #gps_params = os.path.join(gps_config_directory, 'zed_f9p.yaml') #TODO: BRING THIS YAML TO BIGBOT_BRINGUP
     navsat_params = os.path.join(get_package_share_directory('bigbot_bringup'), 'navsat_transform.yaml')
 
     ublox_gps_node = Node(package='ublox_gps',
@@ -19,6 +19,11 @@ def generate_launch_description():
                          output='both',
                          parameters=[gps_params])
     # produceert /fix stream (sensor_msgs/msg/NatSatFix)
+
+    oak_vio_node = Node(package='bigbot_localization',
+                         executable='gnss_pose',
+                         output='screen')
+
     gps_exit_event = RegisterEventHandler(
          event_handler=OnProcessExit(
              target_action=ublox_gps_node,
@@ -47,6 +52,7 @@ def generate_launch_description():
     # cmdline call robot_localization/SetDaumService
 
     return launch.LaunchDescription([   ublox_gps_node,
+                                        oak_vio_node,
                                         #wit_node,
                                         #gps_exit_event,
                                         #navsat_transform_node,

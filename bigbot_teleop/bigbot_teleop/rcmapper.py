@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import rclpy
 import os # shutdown
 import numpy as np
@@ -13,12 +14,13 @@ from bigbot_interfaces.msg import PTZSetpoint
 import subprocess
 from enum import Enum
 from bigbot_interfaces.srv import PredefinedPath
+from bigbot_obstacle.timers import IdleTimer
 
 class Mode(Enum):
     NO_MODE = 0,
     FREE_MODE = 1,
-    RADIUS_MODE = 2,
-    AUTONOMOUS_MODE = 3
+    AUTONOMOUS_MODE = 2,
+    FOLLOWME_MODE = 3
 
 class Toggle:
     def __init__(self, start_value):
@@ -70,19 +72,20 @@ class RcMapper(Node):
         self.declare_parameter('MaxSpeed', 2.0, PD(description="Maximum horizontal speed in m/s"),) # max speed per motor = 2 m/s
         self.declare_parameter('MaxRotSpeed', 4.0, PD(description="Maximum rotational speed in rad/s")) 
         self.process = None
+        self.temptimer = None
         self.mode = Mode.NO_MODE
         self.pubspeak = self.create_publisher(String, '/speak', 10)
         self.pubspeed = self.create_publisher(Twist, '/cmd_vel', 10)
         self.subjoy = self.create_subscription(Joy, '/joy', self.listener_callback, 10)
         self.pubptz = self.create_publisher(PTZSetpoint, '/ptz_setpoint', 10)        
+        self.pubvellimit = self.create_publisher(Float32, '/velocity_limit', 10) # ONLY FOR PATHFOLLOWER (NORMALLY COMES FROM LIDAR)
 
         ## LET OP: TESTING, DIT VERANDERD !! 
-        ###self.pubfollowme = self.create_publisher(Bool, '/start_followme', 10)
-        self.pubfollowme = self.create_publisher(Bool, '/start_pathfollowing', 10)
-        
+        self.pubfollowme = self.create_publisher(Bool, '/start_person_tracking', 10)
+        self.pubpath = self.create_publisher(Bool, '/start_pathfollowing', 10)
         self.path_client = self.create_client(PredefinedPath, 'execute_path')
 
-        self.output_directory = '/media/bigbot/KINGSTON' #logging
+        self.output_directory = '/media/bigbot/KINGSTON' #logging #make this a parameter
         self.initrc()
 	
     def initrc(self):
@@ -92,6 +95,8 @@ class RcMapper(Node):
         self.monitor_manual_radius_mode = Toggle(False)
         self.monitor_manual_autonomous_mode = Toggle(False)
         self.monitor_stop_autonomous_mode = Toggle(False)
+        self.startshutdownbutton = Toggle(False)
+        self.stopshutdownbutton = Toggle(False)
         self.gopathbutton = Toggle(False)
         
     def maprc(self, inmsg):
@@ -101,10 +106,22 @@ class RcMapper(Node):
         stoplogging = self.stoploggingbutton.ChangedTrue(currentlylogging == False)
         do_new_path = self.gopathbutton.ChangedTrue(inmsg.axes[5] == -1)
         
+        shutdownpushed = inmsg.axes[5] == -1 # Key1 pressed
+        startshutdown = self.startshutdownbutton.ChangedTrue(shutdownpushed)
+        stopshutdown = self.stopshutdownbutton.ChangedTrue(shutdownpushed == False)
+
+        if startshutdown == True: self.temptimer = IdleTimer(2)
+        if stopshutdown == True: 
+            try:
+                if self.temptimer.istriggered() == True:
+                    self._shutdown_now()
+            except:
+                pass
+
         goto_free_mode = self.monitor_manual_free_mode.ChangedTrue(inmsg.buttons[6] == 1)
-        goto_radius_mode = self.monitor_manual_radius_mode.ChangedTrue(inmsg.buttons[4] == 1)
-        goto_autonmous_mode = self.monitor_manual_autonomous_mode.ChangedTrue(inmsg.buttons[5] == 1)
-        stopping_autonomous_mode = self.monitor_stop_autonomous_mode.ChangedTrue(inmsg.buttons[5] == 0)
+        goto_autonomous_mode = self.monitor_manual_radius_mode.ChangedTrue(inmsg.buttons[4] == 1)
+        goto_followme_mode = self.monitor_manual_autonomous_mode.ChangedTrue(inmsg.buttons[5] == 1)
+        stopping_followme_mode = self.monitor_stop_autonomous_mode.ChangedTrue(inmsg.buttons[5] == 0)
 
         vxMAP = inmsg.axes[1] * -1 * self.get_parameter('MaxSpeed').value
         vrotMAP = inmsg.axes[0] * self.get_parameter('MaxRotSpeed').value
@@ -124,32 +141,47 @@ class RcMapper(Node):
         # This is not correct but not relevant at this point 
         ptzupaxis = inmsg.axes[2]  # [-1,1] this is position, not speed
         ptzhoraxis = -1 * inmsg.axes[3]  # [-1,1]
-        ptzzoomaxis = inmsg.axes[5]  #zoom [-1,1] # now used for do_new_path
+        ###########################switchoff = inmsg.axes[5]
+        if inmsg.buttons[7] == 1:
+            ptzzoomaxis = 1.0
+        elif inmsg.buttons[8] == 1:
+            ptzzoomaxis = -1.0
+        else:
+            ptzzoomaxis = 0.0
 
-        return (vxMAP, vrotMAP, vradiusMAP, vrotradiusMAP, do_new_path, ptzupaxis, ptzhoraxis, ptzzoomaxis, startlogging, stoplogging, goto_free_mode, goto_radius_mode, goto_autonmous_mode, stopping_autonomous_mode)
+        return (vxMAP, vrotMAP, vradiusMAP, vrotradiusMAP, do_new_path, ptzupaxis, ptzhoraxis, ptzzoomaxis, startlogging, stoplogging, goto_free_mode, goto_autonomous_mode, goto_followme_mode, stopping_followme_mode)
 
     def listener_callback(self, inmsg):
         vx, vrot, vradiusMAP, vrotradiusMAP, do_new_path, ptzupaxis, ptzhoraxis, ptzzoomaxis, startlogging, stoplogging, \
-            goto_free_mode, goto_radius_mode, goto_autonmous_mode, stopping_autonomous_mode = self.maprc(inmsg)
+            goto_free_mode, goto_autonomous_mode, goto_followme_mode, stopping_followme_mode = self.maprc(inmsg)
         
         if goto_free_mode == True: 
             self.speak("Go to manual mode")
             self.mode = Mode.FREE_MODE
-        if goto_radius_mode == True: 
-            self.speak("Go to manual mode with radius restriction")
-            self.mode = Mode.RADIUS_MODE
-        if goto_autonmous_mode == True:
-            self.speak("Go to autonomous mode")
+            ## kerst2024 geen pub vellimit in free_mode
+            msg = Float32( data = 100.0)
+            self.pubvellimit.publish(msg)
+        if goto_autonomous_mode == True: 
+            self.speak("Go to autonomous mode") # "Go to manual mode with radius restriction"
+            self.mode = Mode.AUTONOMOUS_MODE #AUTONOMOUS_MODE IS PATHFOLLOWER (only map maxvel along path, path setting via GUI)
+            ## kerst2024  vellimit is van joystick, maar begin met stilstand
+            msg = Float32( data = 0.0)
+            self.pubvellimit.publish(msg)
+        if goto_followme_mode == True:
+            self.speak("Go to follow me mode")  # "Go to autonomous mode"
             self.pubspeed.publish(Twist())
             self._start_followme() # or make this a serive ? (to be decided)
-            self.mode = Mode.AUTONOMOUS_MODE
-        if stopping_autonomous_mode == True:
+            self.mode = Mode.FOLLOWME_MODE
+        if stopping_followme_mode == True:
             self._stop_followme() # or make this a serive ? (to be decided)
         if do_new_path == True:
+            self.speak("Oval left")
+            self.get_logger().info("starting oval left")
             path_req = PredefinedPath.Request()
             path_req.path = PredefinedPath.Request.OVALLEFT
             future = self.path_client.call_async(path_req)
             future.add_done_callback(self.receive_path_response)
+
         #if self.mode == Mode.NO_MODE: #11 aug, uitgevinkt want PTZSetpoint en logging mag wel werken in NO_MODE
         #    return
         if self.mode == Mode.FREE_MODE:
@@ -161,18 +193,20 @@ class RcMapper(Node):
             msg.linear.x = vx
             msg.angular.z = vrot
             self.pubspeed.publish(msg)
-        if self.mode == Mode.RADIUS_MODE:
-            # Assign Twist
-            minradius = 0.7 # [m]
-            msg = Twist()
-            #vradiusMAP, vrotradiusMAP
-            vrotmax = np.abs(vradiusMAP) / minradius
-            if vrotradiusMAP > 0:
-                msg.angular.z = min(vrotradiusMAP, vrotmax)
-            else:
-                msg.angular.z = max(vrotradiusMAP, -vrotmax)
-            msg.linear.x = vradiusMAP
-            self.pubspeed.publish(msg)
+        if self.mode == Mode.AUTONOMOUS_MODE: # DIT IS DE PATHFOLLOWER, LET NIET OP DE NAAMGEVING (NOG DOEN)
+            msg = Float32( data = vx)
+            self.pubvellimit.publish(msg)
+            # # Assign Twist
+            # minradius = 0.7 # [m]
+            # msg = Twist()
+            # #vradiusMAP, vrotradiusMAP
+            # vrotmax = np.abs(vradiusMAP) / minradius
+            # if vrotradiusMAP > 0:
+            #     msg.angular.z = min(vrotradiusMAP, vrotmax)
+            # else:
+            #     msg.angular.z = max(vrotradiusMAP, -vrotmax)
+            # msg.linear.x = vradiusMAP
+            # self.pubspeed.publish(msg)
 
         ptzmsg = PTZSetpoint()
         ptzmsg.horizontalspeed = ptzhoraxis
@@ -186,15 +220,19 @@ class RcMapper(Node):
             self._stop_recording()
 
         # LET OP: Met nieuwe conotroller moet dit worden geremapped
-        #if (inmsg.axes[5] < -0.99):
-        #    os.system("shutdown now -h")
+
+    def _shutdown_now(self):
+        self.get_logger().info("shutdown now -h")
+        os.system("shutdown now -h")
 
     def receive_path_response(self, future):
         msg = future.result() 
         self.get_logger().info('Path Response Received. SUCCESS = %s'  % (str(msg.success)))
+        self.pubpath.publish(Bool(data = True)) # publishgo ahead follow path, now we know path is received
        
     def _start_recording(self):
-        command = ['ros2', 'bag', 'record', '-a', '-b', '10000000']
+        #command = ['ros2', 'bag', 'record', '-a', '-b', '20000000', '--storage', 'mcap', '--no-compression'] # Before ROS2 Jazzy
+        command = ['ros2', 'bag', 'record', '-a', '--compression-mode', 'none', '--max-bag-size', '20000000', '--storage', 'mcap'] # ROS2 Jazzy
         try:
             self.process = subprocess.Popen(command, cwd = self.output_directory)
         except: 

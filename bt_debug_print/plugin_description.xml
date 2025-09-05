@@ -1,0 +1,5 @@
+<library path="bt_debug_print_node">
+  <class name="DebugPrint" type="bt_debug_print::DebugPrint" base_class_type="BT::SyncActionNode">
+    <description>Debug print node for tracing BT execution</description>
+  </class>
+</library>
