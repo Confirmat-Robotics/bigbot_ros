@@ -322,7 +322,7 @@ def main():
     rclpy.init()
     node = RosWaypointNode()
 
-    robot_name = "SanFran_Waffle"
+    robot_name = os.environ.get("ROBOT_NAME")
     if node.has_parameter('robot_name'):
         robot_name = node.get_parameter('robot_name').get_parameter_value().string_value
 
