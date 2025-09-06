@@ -52,7 +52,7 @@ class CloudInterface(Node):
         self.declare_parameter('ecef_frame', 'FP_ECEF')
         self.ecef = self.get_parameter('ecef_frame').get_parameter_value().string_value
         self.declare_parameter('map_frame', 'map')
-        self.map = self.get_parameter('map_frame').get_parameter_value().string_value
+        self.map = self.get_parameter('map_frame').get_parameter_value().string_value 
         
         self.mqttpub = MqttPublisher()
 
