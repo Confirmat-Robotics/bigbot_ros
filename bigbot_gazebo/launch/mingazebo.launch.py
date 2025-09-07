@@ -56,14 +56,11 @@ def generate_launch_description():
         PythonLaunchDescriptionSource(
             os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
         ),
-        launch_arguments={'gz_args': ['-r -s -v2 ', world_path], 'on_exit_shutdown': 'true'}.items()
-    )
-
-    gzclient_cmd = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(
-            os.path.join(ros_gz_sim, 'launch', 'gz_sim.launch.py')
-        ),
-        launch_arguments={'gz_args': '-g -v2', 'on_exit_shutdown': 'true'}.items()
+        # Added --headless-rendering
+        launch_arguments={
+            'gz_args': ['-r -s -v2 --headless-rendering ', world_path],
+            'on_exit_shutdown': 'true'
+        }.items()
     )
 
     spawn_robot_cmd = IncludeLaunchDescription(
@@ -97,6 +94,5 @@ def generate_launch_description():
 
     # Add the commands to the launch description
     ld.add_action(gzserver_cmd)
-    #ld.add_action(gzclient_cmd)
     ld.add_action(spawn_robot_cmd)
     return ld
