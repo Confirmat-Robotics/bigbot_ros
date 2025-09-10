@@ -81,7 +81,7 @@ def generate_launch_description():
         }.items()
     )
 
-    # Include: BigBot Cloud
+    # Include: BigBot Cloud (Fleetly)
     bigbot_cloud_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution([
             bigbot_cloud_pkg, 'launch', 'bigbot_local.launch.py'
@@ -89,7 +89,7 @@ def generate_launch_description():
     )
 
     bigbot_cloud_launch_delayed = TimerAction(
-        period=6.0,  # Delay by 2 seconds
+        period=6.0,  # Delay by 6 seconds
         actions=[bigbot_cloud_launch]
     )
     ld = LaunchDescription([
