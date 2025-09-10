@@ -77,7 +77,7 @@ def generate_launch_description():
     # Include: BigBot Cloud
     bigbot_cloud_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution([
-            bigbot_cloud_pkg, 'launch', 'bigbot_local.launch.py'
+            bigbot_cloud_pkg, 'launch', 'bigbot_fleetly.launch.py'
         ]))
     )
 

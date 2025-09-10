@@ -30,45 +30,14 @@ Listens for path commands from Fleetly over MQTT and sends them to Nav2 for exec
 
 ---
 
-## Installation
-
-1. **Clone the repository:**
-   ```sh
-   cd ~/ros2_ws/src
-   git clone <this-repo-url> bigbot_cloud
-   ```
-
-2. **Install dependencies:**
-   ```sh
-   cd ~/ros2_ws
-   rosdep install --from-paths src --ignore-src -r -y
-   ```
-
-3. **Build the package:**
-   ```sh
-   colcon build --packages-select bigbot_cloud
-   source install/setup.bash
-   ```
-
----
-
-## Configuration
-
-- Edit the parameters in the launch files or YAML config files to set:
-  - MQTT broker address and credentials
-  - Fleetly topic names
-  - Robot-specific settings (frame IDs, battery topic, etc.)
-
----
-
 ## Usage
 
 ### Launching
 
-Use the provided launch files to start the cloud interface and path conversion nodes:
+Use the provided launch files to start the cloud interface and path conversion nodes (for incoming MQTT messages from Fleetly):
 
 ```sh
-ros2 launch bigbot_cloud bigbot_cloud.launch.py
+ros2 launch bigbot_cloud bigbot_fleetly.launch.py
 ```
 
 You can also launch individual nodes as needed, e.g.:
@@ -86,18 +55,6 @@ ros2 run bigbot_cloud mqtt_systemd_monitor
 2. The `path_conversion_node` receives the path over MQTT and forwards it to Nav2.
 3. The robot executes the path using the Nav2 navigation stack.
 
-
----
-
-## Contributing
-
-Pull requests are welcome! Please open an issue first to discuss your proposed changes.
-
----
-
-## License
-
-[MIT](LICENSE)
 
 ---
 

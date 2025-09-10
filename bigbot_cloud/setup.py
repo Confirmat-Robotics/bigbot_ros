@@ -12,7 +12,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', ['launch/bigbot_cloud.launch.py']),
-        ('share/' + package_name + '/launch', ['launch/bigbot_local.launch.py']),
+        ('share/' + package_name + '/launch', ['launch/bigbot_fleetly.launch.py']),
     ],
     install_requires=['setuptools'],
     zip_safe=True,
