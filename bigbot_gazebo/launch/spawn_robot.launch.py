@@ -30,12 +30,6 @@ def generate_launch_description():
         ROBOT_MODEL,
         f'{ROBOT_MODEL}.sdf'
     )
-    # xacro_file = os.path.join(
-    #     get_package_share_directory('bigbot_description'),
-    #     'urdf', 
-    #     'bigbot_harmonic.urdf'
-    # )
-    # urdf_description = Transformer(xacro_file).geturdf()
 
     # Launch configuration variables specific to simulation
     x_pose = LaunchConfiguration('x_pose', default='0.0')

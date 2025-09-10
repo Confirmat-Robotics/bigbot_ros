@@ -13,15 +13,27 @@ from launch.actions import TimerAction
 from launch.actions import (
     IncludeLaunchDescription, ExecuteProcess, TimerAction
 )
-from launch.substitutions import PathJoinSubstitution
+from launch.substitutions import PathJoinSubstitution, LaunchConfiguration
 from launch_ros.substitutions import FindPackageShare
+from launch.actions import DeclareLaunchArgument
+from launch.conditions import IfCondition
 
 def generate_launch_description():
-    gps_sim_pkg = FindPackageShare('bigbot_gazebo')
-    bigbot_cloud_pkg = FindPackageShare('bigbot_cloud')
-    bigbot_gazebo_dir = get_package_share_directory('bigbot_gazebo')
+    # Launch argument to optionally start Fleetly (BigBot Cloud)
+    fleetly_arg = DeclareLaunchArgument(
+        'fleetly',
+        default_value='false',
+        description='Set to true to launch BigBot Cloud Fleetly integration'
+    )
 
-    nav2params = os.path.join(bigbot_gazebo_dir, 'config', 'nav2_pursuit_control.yaml')
+    gps_sim_pkg = FindPackageShare("bigbot_gazebo")
+    bigbot_cloud_pkg = FindPackageShare('bigbot_cloud')
+   
+    nav2params = PathJoinSubstitution([
+        gps_sim_pkg,
+        "config",
+        "nav2_pursuit_control.yaml"
+    ])
     configured_params = RewrittenYaml(
         source_file=nav2params, 
         root_key="", 
@@ -29,7 +41,7 @@ def generate_launch_description():
         convert_types=True
     )
 
-    bigbot_description = os.path.join(get_package_share_directory('bigbot_description'))
+    bigbot_description = get_package_share_directory('bigbot_description')
     xacro_file = os.path.join(bigbot_description, 'urdf', 'bigbot.urdf')
     doc = Transformer(xacro_file)
     
@@ -50,7 +62,9 @@ def generate_launch_description():
     
     simulator = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
-            os.path.join(bigbot_gazebo_dir, 'launch', 'gazebo.launch.py')
+            PathJoinSubstitution([
+                gps_sim_pkg, "launch", "gazebo.launch.py"
+            ])
         ),
         launch_arguments={
             'use_sim_time': 'True',
@@ -66,7 +80,11 @@ def generate_launch_description():
     )
 
     nav2_bringup = IncludeLaunchDescription(
-        PythonLaunchDescriptionSource(os.path.join(bigbot_gazebo_dir, 'launch', 'nav2.launch.py')),
+        PythonLaunchDescriptionSource(
+            PathJoinSubstitution([
+                gps_sim_pkg, "launch", "nav2.launch.py"
+            ]),
+        ),
         launch_arguments={
             'params_file': configured_params,
             'autostart': 'True',
@@ -74,11 +92,17 @@ def generate_launch_description():
         }.items()
     )
 
-    # Include: BigBot Cloud
     bigbot_cloud_launch = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(PathJoinSubstitution([
             bigbot_cloud_pkg, 'launch', 'bigbot_fleetly.launch.py'
         ]))
+    )
+
+    # Delay cloud launch only if fleetly:=true
+    bigbot_cloud_launch_delayed = TimerAction(
+        period=6.0,
+        actions=[bigbot_cloud_launch],
+        condition=IfCondition(LaunchConfiguration('fleetly'))
     )
 
     # RViz config
@@ -92,11 +116,8 @@ def generate_launch_description():
         output='screen'
     )
 
-    bigbot_cloud_launch_delayed = TimerAction(
-        period=6.0,  # Delay by 2 seconds
-        actions=[bigbot_cloud_launch]
-    )
     ld = LaunchDescription([
+        fleetly_arg,
         nav2_bringup,
         simulator,
         odom_connect_node,
