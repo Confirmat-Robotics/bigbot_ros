@@ -3,7 +3,7 @@
 The package bigbot_description contains the urdf model of the bigbot for use of visualization of the robot in rviz, or in simulators such as Gazebo.
 The image below shows a joint state publisher which allows manipulation of the wheels. 
 
-![Urdf in rviz with joint state publisher](media/urdf_of_bigbot.png)
+![Urdf in rviz with joint state publisher](../media/urdf_of_bigbot.png)
 
 
 ### Addons ###
@@ -11,12 +11,12 @@ Besides the bigbot also two addons have been modelled.
 
 The fixposition GTK-RTK module which allows for accurate positioning of the bigbot.
 
-![GPS-RTK accurate positioning of the bigbot](media/fixpos_gps.png)
+![GPS-RTK accurate positioning of the bigbot](../media/fixpos_gps.png)
 
 
 The TIM lidar for mapping and obstacle avoidance.
 
-![TIM lidar](media/lidar.png)
+![TIM lidar](../media/lidar.png)
 
 
 ### Gazebo simulation ###
