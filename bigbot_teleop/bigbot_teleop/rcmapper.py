@@ -3,18 +3,15 @@ import rclpy
 import os # shutdown
 import numpy as np
 from rclpy.node import Node
-from rclpy.qos import QoSProfile
-from rclpy.parameter import Parameter
 from rcl_interfaces.msg import ParameterDescriptor as PD
 from sensor_msgs.msg import Joy
 from geometry_msgs.msg import Twist
 from std_msgs.msg import Bool, Float32, String
-from threading import Timer
 from bigbot_interfaces.msg import PTZSetpoint
 import subprocess
 from enum import Enum
 from bigbot_interfaces.srv import PredefinedPath
-from bigbot_obstacle.timers import IdleTimer
+from bigbot_common.timers import IdleTimer
 
 class Mode(Enum):
     NO_MODE = 0,
