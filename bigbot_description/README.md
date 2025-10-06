@@ -35,5 +35,5 @@ If you do not use a fixposition GPS or a TIM lidar you can manually remove these
 #### Controller ####
 
 The gazebo model has a controller for the wheels. An actual speed-controller is in the package bigbot_controller.
-The two left wheels are driven by one controller, and the two right wheels by another. Cornering is done by skidding.
+The two left wheels are driven by one controller, and the two right wheels by another. Cornering is done by skidding!
 
