@@ -13,10 +13,16 @@
           </Sequence>
         </RecoveryNode>
 
-        <!-- Keep PlanOnce's completed state and path while pausing FollowPath. -->
+        <!-- Keep the plan, tracking a remaining suffix without updating the live controller goal.
+             Copy that suffix only after pause has halted FollowPath. This preserves RPP's
+             bounded nearest-pose search when a subsequent FollowPath goal resumes. -->
         <PauseResumeController pause_service_name="/navigate_through_poses/pause"
                                resume_service_name="/navigate_through_poses/resume"
                                state_topic="/navigate_through_poses/bt_state">
+        <ReactiveSequence name="TrackProgressAndFollow">
+          <TruncatePathLocal input_path="{path}" output_path="{resume_path}"
+                             distance_forward="inf" distance_backward="1.0"
+                             max_robot_pose_search_dist="10.0"/>
         <RecoveryNode number_of_retries="10" name="FollowRetry">
           <FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}"/>
           <Sequence>
@@ -24,7 +30,9 @@
             <ClearEntireCostmap name="ClearLocalCostmap" service_name="local_costmap/clear_entirely_local_costmap"/>
           </Sequence>
         </RecoveryNode>
-
+        </ReactiveSequence>
+        <AlwaysSuccess/><!-- PAUSED: keep ticking without motion -->
+        <Script code="path := resume_path"/><!-- ON_PAUSE: commit observed route progress -->
         </PauseResumeController>
       </Sequence>
 
