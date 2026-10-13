@@ -13,6 +13,10 @@
           </Sequence>
         </RecoveryNode>
 
+        <!-- Keep PlanOnce's completed state and path while pausing FollowPath. -->
+        <PauseResumeController pause_service_name="/navigate_through_poses/pause"
+                               resume_service_name="/navigate_through_poses/resume"
+                               state_topic="/navigate_through_poses/bt_state">
         <RecoveryNode number_of_retries="10" name="FollowRetry">
           <FollowPath path="{path}" controller_id="{selected_controller}" error_code_id="{follow_path_error_code}"/>
           <Sequence>
@@ -21,6 +25,7 @@
           </Sequence>
         </RecoveryNode>
 
+        </PauseResumeController>
       </Sequence>
 
   </BehaviorTree>

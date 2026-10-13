@@ -8,6 +8,7 @@
 
 bt_navigator:
   ros__parameters:
+    plugin_lib_names: ["bigbot_pause_resume_controller_bt_node"]
     default_nav_to_pose_bt_xml: "$(find-pkg-share bigbot_gazebo)/config/test_pose.xml"
     default_nav_through_poses_bt_xml: "$(find-pkg-share bigbot_gazebo)/config/bigbot_tru_poses.xml"
     enable_groot_monitoring: true

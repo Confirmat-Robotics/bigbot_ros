@@ -19,6 +19,7 @@
   <depend>bigbot_cloud</depend>
   <depend>nav2_bringup</depend>
   <depend>nav2_common</depend>
+  <exec_depend>bigbot_bt_nodes</exec_depend>
   <depend>geometry_msgs</depend>
   <depend>tf2_ros</depend>
   <depend>bigbot_interfaces</depend>

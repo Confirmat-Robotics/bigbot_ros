@@ -6,6 +6,10 @@
 -->
 <root BTCPP_format="4" main_tree_to_execute="MainTree">
   <BehaviorTree ID="MainTree">
+    <!-- Covers navigation and all recovery motion; the goal remains active. -->
+    <PauseResumeController pause_service_name="/navigate_to_pose/pause"
+                           resume_service_name="/navigate_to_pose/resume"
+                           state_topic="/navigate_to_pose/bt_state">
     <RecoveryNode number_of_retries="6" name="NavigateRecovery">
       <PipelineSequence name="NavigateWithReplanning">
         <ControllerSelector selected_controller="{selected_controller}" default_controller="FollowPath" topic_name="controller_selector"/>
@@ -51,5 +55,6 @@
         </ReactiveFallback>
       </Sequence>
     </RecoveryNode>
+    </PauseResumeController>
   </BehaviorTree>
 </root>
